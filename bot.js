@@ -31,7 +31,7 @@ var GlobalADID="GlobalADID";
 //for cosmos db
 
  var documentDbOptions = {
-     host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
+     host: 'https://vms-godrej-nodejs.documents.azure.com:443/', 
      masterKey: 'myDAaMiqqMvLPFjl1p3a7O4U6J26biWzefQwyTo7O5lzJ5wEYnvepqkra2U1LEp7X8Qlwi3dbLs2Op6l6TL06g==' // 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
     database: 'botdocs',   
     collection: 'botdata'
