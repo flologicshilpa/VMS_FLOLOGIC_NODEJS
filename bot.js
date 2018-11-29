@@ -64,7 +64,7 @@ bot.dialog('GreetingDialog',[
         var name=session.message.user.name;
         var id=session.message.user.id;
         var token1 = session.message.user.token;
-        auth = "Basic " + new Buffer("NSAMARTH" + ":" + "1234567890").toString("base64");
+        auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
         intent = args.intent;
 
         session.conversationData[GlobalADID]=id;        
