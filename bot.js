@@ -173,7 +173,7 @@ bot.dialog('endConversationDialog',[
                 var msg = new builder.Message()
                 .addAttachment(card)
                 session.send(msg);
-        session.send('You have quite current conversation. New conversation start type your query')              
+        session.send('You have quite/cancel current conversation.For staring new conversation type your query')              
        // session.send('I am sorry I did not understand your question. Please retry the query or you may startover by clicking the start over button');        
         session.endDialog();
     }
