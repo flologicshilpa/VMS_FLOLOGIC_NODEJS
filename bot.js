@@ -2,7 +2,7 @@
 const builder = require('botbuilder');
 
 //for cosmos db
-var azure = require('botbuilder-azure');
+//var azure = require('botbuilder-azure');
 
 const connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,
@@ -26,19 +26,19 @@ var GlobalServiceCode="GlobalServiceCode";
 var GlobalServiceName="GlobalServiceName";
 var GlobalADID="GlobalADID";
 
-//var inMemoryStorage = new builder.MemoryBotStorage();
+var inMemoryStorage = new builder.MemoryBotStorage();
 
 //for cosmos db
 
- var documentDbOptions = {
-     host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
-     masterKey: 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
-    database: 'botdocs',   
-    collection: 'botdata'
- };
+//  var documentDbOptions = {
+//      host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
+//      masterKey: 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
+//     database: 'botdocs',   
+//     collection: 'botdata'
+//  };
 
- var docDbClient = azure.DocumentDbClient(documentDbOptions);
- var cosmosStorage = azure.AzureBotStorage({ gzipData: false }, docDbClient);
+ //var docDbClient = azure.DocumentDbClient(documentDbOptions);
+ //var cosmosStorage = azure.AzureBotStorage({ gzipData: false }, docDbClient);
 
 
 
@@ -47,7 +47,7 @@ var GlobalADID="GlobalADID";
 //universal bot connection
 const  bot = module.exports =  new builder.UniversalBot(connector, function (session, args) {  
     // session.send("welcome");    
- }).set('storage', cosmosStorage); 
+ }).set('storage', inMemoryStorage); 
 
 
 //LUIS Connection
