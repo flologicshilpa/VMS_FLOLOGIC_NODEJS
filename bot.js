@@ -173,7 +173,7 @@ bot.dialog('endConversationDialog',[
                 var msg = new builder.Message()
                 .addAttachment(card)
                 session.send(msg);
-        session.send('You have quite/cancel current conversation.For staring new conversation type your query')              
+        session.send('You have quite current conversation. New conversation start type your query')              
        // session.send('I am sorry I did not understand your question. Please retry the query or you may startover by clicking the start over button');        
         session.endDialog();
     }
@@ -402,15 +402,23 @@ bot.dialog('GSTandPAN_NoDialog',[
                 {
                         if(abc.length == 1)
                         {
-                            session.conversationData[GlobalRequestNo] = abc[0].REQUEST_NO;   
+                            session.conversationData[GlobalRequestNo] = abc[0].REQUEST_NO;  
+                            var data1=session.conversationData[GlobalRequestNo];
+                            var enquryno=data1.replace('/', '_');
+                            var finaleqno=enquryno.replace('/','_');
+                            
                             //get gst or pan attach document                                 
 
                             if(session.conversationData[Gloabalentity1]=="GstNo")
                             {
                                 attachdoc = getattachdocument(session,abc);                               
                                 var exte = getextention(attachdoc);
+
+                                if(attachdoc)
+                                {
                                 var msg = session.message;                               
                                  var attachment = msg.attachments[0];
+                                 
                                     session.send({
                                         text: "You sent:",
                                         attachments: [
@@ -421,7 +429,10 @@ bot.dialog('GSTandPAN_NoDialog',[
                                             }
                                         ]
                                     });
-                               
+                                }
+                                else{
+                                    session.send("Gst Certificate Not attach");
+                                }
                                 session.send('Vendor Name : %s \n GST No : %s ',abc[0].VENDOR_NAME,abc[0].GST_NO +'<br>' );
                                 session.endDialog();  
                             }
@@ -429,6 +440,8 @@ bot.dialog('GSTandPAN_NoDialog',[
                             {
                                 attachdoc = getattachdocument(session,abc);                              
                                  var exte = getextention(attachdoc);
+                                 if(attachdoc)
+                                 {
                                  var msg = session.message;                               
                                   var attachment = msg.attachments[0];
                                      session.send({
@@ -441,7 +454,10 @@ bot.dialog('GSTandPAN_NoDialog',[
                                              }
                                          ]
                                      });
-                                
+                                    }
+                                    else{
+                                        session.send("PAN card copy not attach");
+                                    }
                                 session.send('Vendor Name : %s \n Pan No : %s ',abc[0].VENDOR_NAME,abc[0].PAN_NO +'<br>' );
                                 session.endDialog(); 
                             }
@@ -503,6 +519,8 @@ bot.dialog('GSTandPAN_NoDialog',[
                  {
                     attachdoc = getattachdocument(session,bodydata);                              
                     var exte = getextention(attachdoc);
+                    if(attachdoc)
+                    {
                     var msg = session.message;                               
                      var attachment = msg.attachments[0];
                         session.send({
@@ -515,12 +533,18 @@ bot.dialog('GSTandPAN_NoDialog',[
                                 }
                             ]
                         });
+                    }
+                    else{
+                        session.send("Gst Certificate Not attach");
+                    }
                     session.send('Vendor Name : %s \n GST No : %s ',bodydata[0].VENDOR_NAME,bodydata[0].GST_NO +'<br>' );
                     session.endDialog(); 
                  } 
                  else{
                     attachdoc = getattachdocument(session,bodydata);                              
                     var exte = getextention(attachdoc);
+                    if(attachdoc)
+                    {
                     var msg = session.message;                               
                      var attachment = msg.attachments[0];
                         session.send({
@@ -533,6 +557,10 @@ bot.dialog('GSTandPAN_NoDialog',[
                                 }
                             ]
                         });
+                    }
+                    else{
+                        session.send("PAN card copy not attach");
+                    }
                     session.send('Vendor Name : %s \n PAN No : %s ',bodydata[0].VENDOR_NAME,bodydata[0].PAN_NO +'<br>' );
                     session.endDialog(); 
                  }
@@ -575,6 +603,8 @@ bot.dialog('GSTandPAN_NoDialog',[
                                 {
                                     attachdoc = getattachdocument(session,bodydata);                              
                                     var exte = getextention(attachdoc);
+                                    if(attachdoc)
+                                    {
                                     var msg = session.message;                               
                                      var attachment = msg.attachments[0];
                                         session.send({
@@ -587,6 +617,10 @@ bot.dialog('GSTandPAN_NoDialog',[
                                                 }
                                             ]
                                         });   
+                                    }
+                                    else{
+                                        session.send("Gst Certificate Not attach");
+                                    }
                                     session.send('Vendor Name : %s \n GST No : %s ',bodydata[0].VENDOR_NAME,bodydata[0].GST_NO);
                                     session.endDialogWithResult(results);
                                 }
@@ -594,11 +628,20 @@ bot.dialog('GSTandPAN_NoDialog',[
                                 {
                                     attachdoc = getattachdocument(session,bodydata);                              
                                     var exte = getextention(attachdoc);
+                                    if(attachdoc)
+                                    {
                                     var msg = session.message;                               
                                     var attachment = msg.attachments[0];
                                     session.send({text: "PAN Card Image:",attachments: [{contentType: "application/" + exte,contentUrl: attachdoc,name: "click here to open file"}]});
+                                    }
+                                    else{
+                                        session.send("PAN card copy Not attach");
+                                    }
+                                   
+                                   
                                     session.send('Vendor Name : %s \n PAN No : %s ',bodydata[0].VENDOR_NAME,bodydata[0].PAN_NO);
                                     session.endDialogWithResult(results);
+
                                 }
                                 else
                                 {
@@ -848,6 +891,12 @@ bot.dialog('AllDocumentDialog',[
                 var msg = new builder.Message(session);
                 msg.attachmentLayout(builder.AttachmentLayout.carousel);
                 session.conversationData[GlobalRequestNo] = abc[0].REQUEST_NO;
+
+                var data1=session.conversationData[GlobalRequestNo];
+                var enquryno=data1.replace('/', '_');
+                var finaleqno=enquryno.replace('/','_');
+
+              
                 var attachments = [];
                     for(i=0; i<abc[0].DOCUMENT_LIST.length; i++)
                     {
@@ -856,13 +905,13 @@ bot.dialog('AllDocumentDialog',[
                                 var fileopen=abc[0].DOCUMENT_LIST[i].FILE_NAME;
                                 var getfileextimage;
                                 //get file extension
-                                getfileextimage = getfileextensionimage(fileopen);                
+                                getfileextimage = getfileextensionimage(fileopen,finaleqno);                
 
                                 var card = new builder.ThumbnailCard(session)
                                 .title(filename)
-                                .images([builder.CardImage.create(session, getfileextimage)])
+                                .images([builder.CardImage.create(session, getfileextimage)]) //http://118.67.249.4:85/GPL-Portal/AttachDocument/
                                 .buttons([
-                                    builder.CardAction.openUrl(session, 'http://118.67.249.4:85/GPL-Portal/AttachDocument/' + fileopen, 'Open Attachment')
+                                    builder.CardAction.openUrl(session, 'https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+fileopen+'&filetag=' , 'Open Attachment')
                                 ])
             
                                 attachments.push(card);                                    
@@ -921,6 +970,9 @@ bot.dialog('AllDocumentDialog',[
                      var msg = new builder.Message(session);
                      msg.attachmentLayout(builder.AttachmentLayout.carousel);
                      session.conversationData[GlobalRequestNo] = bodydata[0].REQUEST_NO;
+                     var data1=session.conversationData[GlobalRequestNo];
+                     var enquryno=data1.replace('/', '_');
+                     var finaleqno=enquryno.replace('/','_');
                      var attachments = [];
                          for(i=0; i<bodydata[0].DOCUMENT_LIST.length; i++)
                          {
@@ -929,13 +981,13 @@ bot.dialog('AllDocumentDialog',[
                                      var fileopen=bodydata[0].DOCUMENT_LIST[i].FILE_NAME;
                                      var getfileextimage;
                                      //get file extension
-                                     getfileextimage = getfileextensionimage(fileopen);                
+                                     getfileextimage = getfileextensionimage(fileopen,finaleqno);                
      
                                      var card = new builder.ThumbnailCard(session)
                                      .title(filename)                                    
                                      .images([builder.CardImage.create(session, getfileextimage)])
                                      .buttons([
-                                         builder.CardAction.openUrl(session, 'http://118.67.249.4:85/GPL-Portal/AttachDocument/' + fileopen, 'Open Attachment')
+                                         builder.CardAction.openUrl(session,'https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+fileopen+'&filetag=', 'Open Attachment')
                                      ])
                  
                                      attachments.push(card);                                    
@@ -974,7 +1026,10 @@ bot.dialog('AllDocumentDialog',[
             else{
                 bodydata=JSON.parse(body);
                 session.conversationData[GlobalRequestNo] = bodydata[0].REQUEST_NO;
-               
+                var data1=session.conversationData[GlobalRequestNo];
+                var enquryno=data1.replace('/', '_');
+                var finaleqno=enquryno.replace('/','_');
+              
                 if(bodydata.length>0)
                 {
               //  var card;
@@ -990,13 +1045,13 @@ bot.dialog('AllDocumentDialog',[
                         var fileopen=bodydata[0].DOCUMENT_LIST[i].FILE_NAME;
                         var getfileextimage;
                         //get file extension
-                        getfileextimage = getfileextensionimage(fileopen);                
+                        getfileextimage = getfileextensionimage(fileopen,finaleqno);                
 
                         var card = new builder.ThumbnailCard(session)
                         .title(filename)
                         .images([builder.CardImage.create(session, getfileextimage)])
                         .buttons([
-                            builder.CardAction.openUrl(session, 'http://118.67.249.4:85/GPL-Portal/AttachDocument/' + fileopen, 'Open Attachment')
+                            builder.CardAction.openUrl(session, 'https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+fileopen+'&filetag=' , 'Open Attachment')
                         ])
     
                          attachments.push(card);                                    
@@ -1515,42 +1570,50 @@ bot.dialog('RequestDetailsDialog',[
 })
 
 //common Function
+
 //get extention of file
 function getextention(fileopen)
 {
    var pdfPath;
          //get file extension
             var path = require('path');
-            var ext = path.extname('http://118.67.249.4:85/GPL-Portal/AttachDocument/' + fileopen);                      
+            if(fileopen)
+            {
+            var ext = path.extname(fileopen);  
+            }
+            else{
+                ext="";
+            }                    
 return ext;
                       
 }
 
 //get image of extension file
-function getfileextensionimage(fileopen)
+function getfileextensionimage(fileopen,finaleqno)
 {
     var pdfPath;
     //get file extension
     var path = require('path');
-    var ext = path.extname('http://118.67.249.4:85/GPL-Portal/AttachDocument/' + fileopen);
-        if (ext.toLowerCase() == ".pdf")
+    var ext = path.extname(fileopen);
+      console.log(ext);
+    if (ext.toLowerCase() == ".pdf")
         {
-            pdfPath ="http://118.67.249.4:85/GPL-Portal/AttachDocumentHeaderImage/if_pdf_272711.png"; 
+            pdfPath ="https://vrm.godrejproperties.com:20080/UAT_VRM/AttachDocumentHeaderImage/if_pdf_272711.png"; 
                 //HttpContext.Current.Server.MapPath("~/AttachDocumentHeaderImage/if_pdf_272711.png");
         }
         else if (ext.toLowerCase() == ".png" || ext.toLowerCase() == ".jpg" || ext.toLowerCase() == ".jpeg" || ext.toLowerCase() == ".gif")
         {
-            pdfPath ="http://118.67.249.4:85/GPL-Portal/AttachDocumentHeaderImage/if_image_272710.png";
+            pdfPath ="https://vrm.godrejproperties.com:20080/UAT_VRM/AttachDocumentHeaderImage/if_image_272710.png";
             //HttpContext.Current.Server.MapPath("~/AttachDocumentHeaderImage/if_image_272710.png");
         }
         else if (ext.toLowerCase() == ".doc" || ext.toLowerCase() == "docx")
         {
-            pdfPath ="http://118.67.249.4:85/GPL-Portal/AttachDocumentHeaderImage/if_word_272714.png";
+            pdfPath ="https://vrm.godrejproperties.com:20080/UAT_VRM/AttachDocumentHeaderImage/if_word_272714.png";
             //HttpContext.Current.Server.MapPath("~/AttachDocumentHeaderImage/if_word_272714.png");
         }
         else if (ext.toLowerCase() == ".xls" || ext.toLowerCase() == "xlsx" || ext.toLowerCase() == "xlsm" || ext.toLowerCase() == "xltx" || ext.toLowerCase() == "xltm")
         {
-            pdfPath ="http://118.67.249.4:85/GPL-Portal/AttachDocumentHeaderImage/if_excel_272709.png";
+            pdfPath ="https://vrm.godrejproperties.com:20080/UAT_VRM/AttachDocumentHeaderImage/if_excel_272709.png";
            // HttpContext.Current.Server.MapPath("~/AttachDocumentHeaderImage/if_excel_272709.png");
         }
         else
@@ -1567,16 +1630,23 @@ function getattachdocument(session,abc)
     var i;
     var filename;
     var fileopen;
+    session.conversationData[GlobalRequestNo] = abc[0].REQUEST_NO;
+    var data1=session.conversationData[GlobalRequestNo];
+    var enquryno=data1.replace('/', '_');
+    var finaleqno=enquryno.replace('/','_');
+
     for(i=0; i < abc[0].DOCUMENT_LIST.length;i++)
     {
         if(abc[0].DOCUMENT_LIST[i].FILE_TYPE =="PAN Card Copy" && session.conversationData[Gloabalentity1]=="PanNo")
         {
-            attachdocpath ='http://118.67.249.4:85/GPL-Portal/AttachDocument/' + abc[0].DOCUMENT_LIST[i].FILE_NAME;
+            attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';
         }
-        else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="GST no image" && session.conversationData[Gloabalentity1]=="GstNo")
+        else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="GST Certificate/ Declaration" && session.conversationData[Gloabalentity1]=="GstNo")
         {
-            attachdocpath ='http://118.67.249.4:85/GPL-Portal/AttachDocument/' + abc[0].DOCUMENT_LIST[i].FILE_NAME;
+            attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
         }
+
+
     }
     return attachdocpath;
 }
@@ -2143,16 +2213,9 @@ function getCardsAttachmentsForMaterialextension(session,abc)
                                 }//card
                                 attachments.push(card);       
                     }
-                    
-                    
+                                
             }//for loop
-            
-
          
-                                                   
-           
-    
-
         return attachments;
 }
 
