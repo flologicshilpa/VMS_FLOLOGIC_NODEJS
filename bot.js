@@ -2648,7 +2648,7 @@ function getCardsAttachmentsForPendingRequest(session,abc)
                         "columns": [
                          {
                             "type": "Column",
-                             "width": 3,
+                             "width": 4,
                             "items": [
                                 {
                                      'type': 'TextBlock',
@@ -2658,7 +2658,7 @@ function getCardsAttachmentsForPendingRequest(session,abc)
                                 },
                              {
                                 "type": "Column",
-                                "width":7,
+                                "width":6,
                                  "items": [
                                 {
                                      'type': 'TextBlock',
@@ -2671,7 +2671,7 @@ function getCardsAttachmentsForPendingRequest(session,abc)
                                     "columns": [
                                     {
                                         "type": "Column",
-                                        "width": 3,
+                                        "width": 4,
                                         "items": [
                                          {
                                                 'type': 'TextBlock',
@@ -2681,7 +2681,7 @@ function getCardsAttachmentsForPendingRequest(session,abc)
                                      },
                                     {
                                      "type": "Column",
-                                     "width":7,
+                                     "width":6,
                                      "items": [
                                     {
                                          'type': 'TextBlock',
@@ -2694,7 +2694,7 @@ function getCardsAttachmentsForPendingRequest(session,abc)
                                      "columns": [
                                          {
                                               "type": "Column",
-                                                "width": 3,
+                                                "width": 4,
                                                 "items": [
                                                 {
                                                      'type': 'TextBlock',
@@ -2704,7 +2704,7 @@ function getCardsAttachmentsForPendingRequest(session,abc)
                                         },
                                         {
                                                  "type": "Column",
-                                                 "width":7,
+                                                 "width":6,
                                                  "items": [
                                                      {
                                                          'type': 'TextBlock',
@@ -2717,7 +2717,7 @@ function getCardsAttachmentsForPendingRequest(session,abc)
                                         "columns": [
                                          {
                                             "type": "Column",
-                                             "width": 3,
+                                             "width": 4,
                                             "items": [
                                              {
                                                 'type': 'TextBlock',
@@ -2727,7 +2727,7 @@ function getCardsAttachmentsForPendingRequest(session,abc)
                                         },
                                         {
                                             "type": "Column",
-                                            "width":7,
+                                            "width":6,
                                             "items": [
                                                     {
                                                                 'type': 'TextBlock',
@@ -2782,7 +2782,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                     "columns": [
                         {
                             "type": "Column",
-                            "width": 3,
+                            "width": 4,
                             "items": [
                                     {
                                         'type': 'TextBlock',
@@ -2792,7 +2792,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                         },
                         {
                             "type": "Column",
-                            "width":7,
+                            "width":6,
                             "items": [
                                     {
                                                 'type': 'TextBlock',
@@ -2805,7 +2805,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                     "columns": [
                         {
                             "type": "Column",
-                            "width": 3,
+                            "width": 4,
                             "items": [
                                     {
                                         'type': 'TextBlock',
@@ -2815,7 +2815,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                         },
                         {
                             "type": "Column",
-                            "width":7,
+                            "width":6,
                             "items": [
                                     {
                                                 'type': 'TextBlock',
@@ -2828,7 +2828,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                         "columns": [
                             {
                                 "type": "Column",
-                                "width": 3,
+                                "width": 4,
                                 "items": [
                                         {
                                             'type': 'TextBlock',
@@ -2838,7 +2838,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                             },
                             {
                                 "type": "Column",
-                                "width":7,
+                                "width":6,
                                 "items": [
                                         {
                                                     'type': 'TextBlock',
@@ -2851,7 +2851,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                        "columns": [
                            {
                                "type": "Column",
-                               "width": 3,
+                               "width": 4,
                                "items": [
                                        {
                                            'type': 'TextBlock',
@@ -2861,7 +2861,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                            },
                            {
                                "type": "Column",
-                               "width":7,
+                               "width":6,
                                "items": [
                                        {
                                                    'type': 'TextBlock',
@@ -2874,7 +2874,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                    "columns": [
                        {
                            "type": "Column",
-                           "width": 3,
+                           "width":4,
                            "items": [
                                    {
                                        'type': 'TextBlock',
@@ -2884,7 +2884,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                        },
                        {
                            "type": "Column",
-                           "width":7,
+                           "width":6,
                            "items": [
                                    {
                                                'type': 'TextBlock',
@@ -2897,7 +2897,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                             "columns": [
                                 {
                                     "type": "Column",
-                                    "width": 3,
+                                    "width": 4,
                                     "items": [
                                             {
                                                 'type': 'TextBlock',
@@ -2907,7 +2907,7 @@ function getCardsAttachmentsForRequestDetails(session,abc)
                                 },
                                 {
                                     "type": "Column",
-                                    "width":7,
+                                    "width":6,
                                     "items": [
                                             {
                                                         'type': 'TextBlock',
