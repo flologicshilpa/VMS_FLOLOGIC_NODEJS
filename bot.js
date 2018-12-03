@@ -30,12 +30,21 @@ var GlobalADID="GlobalADID";
 
 //for cosmos db
 
- var documentDbOptions = {
-     host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
-     masterKey: 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
+var documentDbOptions = {
+    host:'https://godrej-vms-db.documents.azure.com:443/', //'https://vms-godrej-nodejs.documents.azure.com:443/',    //'', 
+    masterKey: 'XKZoZeXgfO8YIPaE6kdbRTk7tYdjF9vz9mgkpvNcHdpFuwOiMuwJmlvE2imiPch3LB3nkZmWdd9ZRXDMQbnLBQ==',//'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
     database: 'botdocs',   
     collection: 'botdata'
- };
+};
+
+
+
+//  var documentDbOptions = {
+//      host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
+//      masterKey: 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
+//     database: 'botdocs',   
+//     collection: 'botdata'
+//  };
 
  var docDbClient = azure.DocumentDbClient(documentDbOptions);
  var cosmosStorage = azure.AzureBotStorage({ gzipData: false }, docDbClient);
