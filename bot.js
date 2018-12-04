@@ -46,8 +46,8 @@ var documentDbOptions = {
 //     collection: 'botdata'
 //  };
 
- var docDbClient = azure.DocumentDbClient(documentDbOptions);
- var cosmosStorage = azure.AzureBotStorage({ gzipData: false }, docDbClient);
+ var docDbClient = new azure.DocumentDbClient(documentDbOptions);
+ var cosmosStorage = new azure.AzureBotStorage({ gzipData: false }, docDbClient);
 
 
 
