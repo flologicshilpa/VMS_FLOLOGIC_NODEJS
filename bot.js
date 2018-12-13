@@ -764,10 +764,18 @@ bot.dialog('ExtensionDialog',[
                     var attachments = [];
 
                         var attachments = getCardsAttachmentsForExtensionList(session,abc);
+                    if(attachments.length > 0)
+                    {
                         msg.attachments(attachments);
                         session.send(msg);
                         session.endDialog(); 
-                       
+                    }
+                    else
+                    {
+                         session.send("Extensions not available");
+                        session.endDialog(); 
+
+                    }
 
 
 
@@ -822,9 +830,18 @@ bot.dialog('ExtensionDialog',[
                      msg.attachmentLayout(builder.AttachmentLayout.carousel);                   
                      var attachments = [];                                            
                      var attachments = getCardsAttachmentsForExtensionList(session,abc);
+                     if(attachments.length > 0)
+                     {
                      msg.attachments(attachments);
                      session.send(msg);
                      session.endDialog(); 
+                     }
+                     else
+                     {
+                        session.send("Extensions not available");
+                        session.endDialog(); 
+                     }
+
                  }                            
              });                        
             }
@@ -854,9 +871,19 @@ bot.dialog('ExtensionDialog',[
                     msg.attachmentLayout(builder.AttachmentLayout.carousel);                   
                     var attachments = [];                                            
                     var attachments = getCardsAttachmentsForExtensionList(session,abc);
+                    if(attachments.length > 0)
+                    {
                     msg.attachments(attachments);
                     session.send(msg);
                     session.endDialog(); 
+                    }
+                    else
+                    {
+                        session.send("Extensions not available");
+                        session.endDialog(); 
+
+                    }
+
             }                            
         }); 
         session.endDialog();
