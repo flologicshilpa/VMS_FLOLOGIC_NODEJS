@@ -1,6 +1,19 @@
 'use strict';
 const builder = require('botbuilder');
 
+
+//qna maker
+//var QnAClient = require('../lib/client');
+var QnAClient = require('./lib/client');
+
+var qnaClient = new QnAClient({
+    knowledgeBaseId: process.env.KB_ID,
+    subscriptionKey: process.env.QNA_KEY,
+    scoreThreshold: 0.2 // OPTIONAL: Default value is 0.2
+});
+
+
+
 //for cosmos db
 var azure = require('botbuilder-azure');
 
@@ -63,6 +76,9 @@ var recognizer = new builder.LuisRecognizer(LuisModelUrl1);
 bot.recognizer(recognizer);
 
 
+//for small talk
+
+
 //greeting dialog
 bot.dialog('GreetingDialog',[
     function (session, args, next) {
@@ -72,9 +88,22 @@ bot.dialog('GreetingDialog',[
         auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
         intent = args.intent;
 
+
+        var myDate = new Date();
+        var hrs = myDate.getHours();
+    
+        var greet;
+    
+        if (hrs < 12)
+            greet = 'Good Morning';
+        else if (hrs >= 12 && hrs <= 17)
+            greet = 'Good Afternoon';
+        else if (hrs >= 17 && hrs <= 24)
+            greet = 'Good Evening';
+
         session.conversationData[GlobalADID]=id;        
         session.conversationData[GloabalIntent] = intent.intent;       
-        session.send('Hello %s! Welcome to Vendor Bot.',name);
+        session.send('%s  %s! Welcome to Vendor Bot.',greet,name);
 
    var card = {  
        
@@ -83,7 +112,6 @@ bot.dialog('GreetingDialog',[
         "$schema":"http://adaptivecards.io/schemas/adaptive-card.json",
         "type": "AdaptiveCard",
         "version": "1.0",
-
             "body": [
             {
                 "type": "TextBlock",
@@ -106,17 +134,14 @@ bot.dialog('GreetingDialog',[
                 "\n _**“all document for kshetra”**_ "              
 
             },
-            
         ]
     }
     }
-                var msg = new builder.Message()
-                .addAttachment(card)
-                session.send(msg);
+        var msg = new builder.Message()
+        .addAttachment(card)
+        session.send(msg);
 
-
-
-        session.send('What information would you like?');    
+        session.send('How may I help you?');    
        // session.send("%s",username1)    
         session.endDialog();
     }
@@ -132,7 +157,7 @@ bot.dialog('endConversationDialog',[
         var name=session.message.user.name;
         var id=session.message.user.id;
         var token1 = session.message.user.token;
-        auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
+        auth = "Basic " + new Buffer("NSAMARTH" + ":" + "1234567890").toString("base64");
         intent = args.intent;
         
         
@@ -412,10 +437,10 @@ bot.dialog('GSTandPAN_NoDialog',[
                 {
                     session.conversationData[Gloabalentity1] ="PanNo";
                 }
-                else if(builder.EntityRecognizer.findEntity(intent.entities,'CST_Certificate'))
-                {
-                    session.conversationData[Gloabalentity1] ="CST_Certificate";
-                }
+                // else if(builder.EntityRecognizer.findEntity(intent.entities,'CST_Certificate'))
+                // {
+                //     session.conversationData[Gloabalentity1] ="CST_Certificate";
+                // }
                 else if(builder.EntityRecognizer.findEntity(intent.entities,'Cancelled_Cheque'))
                 {
                     session.conversationData[Gloabalentity1] ="Cancelled_Cheque";
@@ -424,18 +449,18 @@ bot.dialog('GSTandPAN_NoDialog',[
                 {
                     session.conversationData[Gloabalentity1] ="Channel_Partner_Agreement";
                 }
-                else if(builder.EntityRecognizer.findEntity(intent.entities,'Company_Registration'))
-                {
-                    session.conversationData[Gloabalentity1] ="Company_Registration";
-                }
+                // else if(builder.EntityRecognizer.findEntity(intent.entities,'Company_Registration'))
+                // {
+                //     session.conversationData[Gloabalentity1] ="Company_Registration";
+                // }
                 else if(builder.EntityRecognizer.findEntity(intent.entities,'EM_Certificate'))
                 {
                     session.conversationData[Gloabalentity1] ="EM_Certificate";
                 }
-                else if(builder.EntityRecognizer.findEntity(intent.entities,'IOM/Approval'))
-                {
-                    session.conversationData[Gloabalentity1] ="IOM/Approval";
-                }
+                // else if(builder.EntityRecognizer.findEntity(intent.entities,'IOM/Approval'))
+                // {
+                //     session.conversationData[Gloabalentity1] ="IOM/Approval";
+                // }
                 else if(builder.EntityRecognizer.findEntity(intent.entities,'PF_Certificate'))
                 {
                     session.conversationData[Gloabalentity1] ="PF_Certificate";
@@ -448,14 +473,14 @@ bot.dialog('GSTandPAN_NoDialog',[
                 {
                     session.conversationData[Gloabalentity1] ="RERA_Certificate";
                 }
-                else if(builder.EntityRecognizer.findEntity(intent.entities,'ST_Certificate'))
-                {
-                    session.conversationData[Gloabalentity1] ="ST_Certificate";
-                }
-                else if(builder.EntityRecognizer.findEntity(intent.entities,'VAT_Certificate'))
-                {
-                    session.conversationData[Gloabalentity1] ="VAT_Certificate";
-                }              
+                // else if(builder.EntityRecognizer.findEntity(intent.entities,'ST_Certificate'))
+                // {
+                //     session.conversationData[Gloabalentity1] ="ST_Certificate";
+                // }
+                // else if(builder.EntityRecognizer.findEntity(intent.entities,'VAT_Certificate'))
+                // {
+                //     session.conversationData[Gloabalentity1] ="VAT_Certificate";
+                // }              
                 else
                 {
                     session.conversationData[Gloabalentity1] ="none";
@@ -764,18 +789,10 @@ bot.dialog('ExtensionDialog',[
                     var attachments = [];
 
                         var attachments = getCardsAttachmentsForExtensionList(session,abc);
-                    if(attachments.length > 0)
-                    {
                         msg.attachments(attachments);
                         session.send(msg);
                         session.endDialog(); 
-                    }
-                    else
-                    {
-                         session.send("Extensions not available");
-                        session.endDialog(); 
-
-                    }
+                       
 
 
 
@@ -830,18 +847,9 @@ bot.dialog('ExtensionDialog',[
                      msg.attachmentLayout(builder.AttachmentLayout.carousel);                   
                      var attachments = [];                                            
                      var attachments = getCardsAttachmentsForExtensionList(session,abc);
-                     if(attachments.length > 0)
-                     {
                      msg.attachments(attachments);
                      session.send(msg);
                      session.endDialog(); 
-                     }
-                     else
-                     {
-                        session.send("Extensions not available");
-                        session.endDialog(); 
-                     }
-
                  }                            
              });                        
             }
@@ -871,19 +879,9 @@ bot.dialog('ExtensionDialog',[
                     msg.attachmentLayout(builder.AttachmentLayout.carousel);                   
                     var attachments = [];                                            
                     var attachments = getCardsAttachmentsForExtensionList(session,abc);
-                    if(attachments.length > 0)
-                    {
                     msg.attachments(attachments);
                     session.send(msg);
                     session.endDialog(); 
-                    }
-                    else
-                    {
-                        session.send("Extensions not available");
-                        session.endDialog(); 
-
-                    }
-
             }                            
         }); 
         session.endDialog();
@@ -1708,30 +1706,30 @@ function getattachdocument(session,abc)
         {
             attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
         }
-        else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="VAT Certificate/ Declaration" && session.conversationData[Gloabalentity1]=="VAT_Certificate")
-        {
-            attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
-        }
+        // else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="VAT Certificate/ Declaration" && session.conversationData[Gloabalentity1]=="VAT_Certificate")
+        // {
+        //     attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
+        // }
         else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="EM Certificate/ Declaration" && session.conversationData[Gloabalentity1]=="EM_Certificate")
         {
             attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
         }
-        else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="CST Certificate/ Declaration" && session.conversationData[Gloabalentity1]=="CST_Certificate")
-        {
-            attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
-        }
-        else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="Company Registration Certificate" && session.conversationData[Gloabalentity1]=="Company_Registration")
-        {
-            attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
-        }
-        else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="IOM/Approval Copy For Procurement" && session.conversationData[Gloabalentity1]=="IOM/Approval")
-        {
-            attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
-        }
-        else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="ST Certificate/ Declaration" && session.conversationData[Gloabalentity1]=="ST_Certificate")
-        {
-            attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
-        }
+        // else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="CST Certificate/ Declaration" && session.conversationData[Gloabalentity1]=="CST_Certificate")
+        // {
+        //     attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
+        // }
+        // else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="Company Registration Certificate" && session.conversationData[Gloabalentity1]=="Company_Registration")
+        // {
+        //     attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
+        // }
+        // else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="IOM/Approval Copy For Procurement" && session.conversationData[Gloabalentity1]=="IOM/Approval")
+        // {
+        //     attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
+        // }
+        // else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="ST Certificate/ Declaration" && session.conversationData[Gloabalentity1]=="ST_Certificate")
+        // {
+        //     attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
+        // }
         else if(abc[0].DOCUMENT_LIST[i].FILE_TYPE=="PF Certificate/ Undertaking" && session.conversationData[Gloabalentity1]=="PF_Certificate")
         {
             attachdocpath ='https://vrm.godrejproperties.com:20080/UAT_VRM/Common/FileDownload.aspx?enquiryno='+finaleqno+'&filename='+abc[0].DOCUMENT_LIST[i].FILE_NAME+'&filetag=';;
@@ -3160,3 +3158,31 @@ function getCardsAttachmentsForRequestDetails(session,abc)
     return attachments;
 }
 
+//greeting dialog
+bot.dialog('SmalltalkDialog',[
+    function (session, args, next) {  
+        // session.send("welcome smalltalk"); 
+        // session.send("%s",session.message.text);
+        qnaClient.post({ question: session.message.text }, function (err, res) {
+            if (err) {
+               // console.error('Error from callback:', err);               
+                session.send('wrong - something went wrong.');
+                return;
+            }
+        
+            if (res) {
+                // Send reply from QnA back to user
+                session.send(res);
+            } else {
+                // Confidence in top result is not high enough - discard result
+                session.send('Hmm, I didn\'t quite understand you there. Care to rephrase?')
+            }
+        });
+        
+        
+        // session.send('%s.',session.message.text);   
+         session.endDialog();
+    }
+]).triggerAction({
+    matches:'SmallTalk'
+})
