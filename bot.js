@@ -79,6 +79,15 @@ bot.recognizer(recognizer);
 //for small talk
 
 
+bot.on("event", function (event) {
+    var msg = new builder.Message().address(event.address);
+    if (event.name === "customEvent") {
+        // HOW CAN I STORE event.value IN session.userData ? 
+      //  console.log(event.value);
+        session.send("%s",event.value)
+    }
+});
+
 //greeting dialog
 bot.dialog('GreetingDialog',[
     function (session, args, next) {
