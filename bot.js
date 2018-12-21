@@ -85,6 +85,8 @@ bot.on("event", function (event) {
         // HOW CAN I STORE event.value IN session.userData ? 
       //  console.log(event.value);
         session.send("%s",event.value)
+        
+        session.beginDialog('GreetingDialog'); 
     }
 });
 
