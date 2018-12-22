@@ -39,7 +39,8 @@ var GlobalServiceCode="GlobalServiceCode";
 var GlobalServiceName="GlobalServiceName";
 var GlobalADID="GlobalADID";
 var GlobalPanGSTCode="GlobalPanGSTCode";
-
+var userquestion="userquestion";
+var conversationid="conversationid";
 
 
 var inMemoryStorage = new builder.MemoryBotStorage();
@@ -64,7 +65,7 @@ var inMemoryStorage = new builder.MemoryBotStorage();
 
 //universal bot connection
 const  bot = module.exports =  new builder.UniversalBot(connector, function (session, args) {  
-    // session.send("welcome");    
+    
  }).set('storage', inMemoryStorage); 
 
 
@@ -76,7 +77,7 @@ var recognizer = new builder.LuisRecognizer(LuisModelUrl1);
 bot.recognizer(recognizer);
 
 
-//for small talk
+
 
 
 bot.on("event", function (event) {
@@ -85,10 +86,12 @@ bot.on("event", function (event) {
         // HOW CAN I STORE event.value IN session.userData ? 
       //  console.log(event.value);
         session.send("%s",event.value)
-        
-        session.beginDialog('GreetingDialog'); 
     }
 });
+
+
+//for small talk
+
 
 //greeting dialog
 bot.dialog('GreetingDialog',[
@@ -114,7 +117,7 @@ bot.dialog('GreetingDialog',[
 
         session.conversationData[GlobalADID]=id;        
         session.conversationData[GloabalIntent] = intent.intent;       
-        session.send('%s!  %s Welcome to Vendor Bot.',greet,name);
+        session.send('%s  %s! Welcome to Vendor Bot.',greet,name);
 
    var card = {  
        
@@ -232,10 +235,18 @@ bot.dialog('NoneDialog',[
 ]).triggerAction({
     matches: 'None'
 })
+
+var salesData={};
+var str1 = "";
+var str2 = "";
+var str3="";
 //Vendor all details Dialog
 bot.dialog('AllDetailsDialog',[
     function (session, args, next) {
        
+        session.conversationData[conversationid]=session.conversationData.id;
+        session.conversationData[userquestion]=session.message.text;
+
        //name not present in query
         if(args.Entity==true)
         {                
@@ -258,7 +269,7 @@ bot.dialog('AllDetailsDialog',[
                 session.conversationData[GlobalPanGSTCode]="";
              }
         }                 
-        if(session.conversationData[Gloabalentity] ||  builder.EntityRecognizer.findEntity(intent.entities,'pan-code') || builder.EntityRecognizer.findEntity(intent.entities,'gstn_code') )
+        if(session.conversationData[Gloabalentity])
         {
             panentity = builder.EntityRecognizer.findEntity(intent.entities,'pan-code');
             gstentity = builder.EntityRecognizer.findEntity(intent.entities,'gstn_code');
@@ -302,9 +313,14 @@ bot.dialog('AllDetailsDialog',[
                     }
                 });
             }
-           else{
+            else{
                 var abc;
                 var dict = [];
+
+               // var dict = {};
+                               
+
+              var choices = {};
                 process.env.global_vendor_name_apiurl  = process.env.ApiURLForVendorName + session.conversationData[GlobalVendorName];
                 Request.get({ url :  process.env.global_vendor_name_apiurl ,headers : { "Authorization" : auth}}, (error, response, body) => {
                     if(error) {
@@ -325,24 +341,78 @@ bot.dialog('AllDetailsDialog',[
                         }
                         //for more than one record found
                         else if(abc.length > 1) 
-                        {                        
+                        {  
+                           
+                            // str1 = abc[0].VENDOR_NAME;
+                            // str2 = abc[1].VENDOR_NAME;
+                            // str3 = abc[2].VENDOR_NAME;
+
+                            // var employees = {
+                            //     accounting: []
+                            // };
+                            
+                            // for(var i in abc) {    
+                            
+                            //     var item = abc[i];   
+                            
+                            //     str1=item.VENDOR_NAME;
+                            //     employees.accounting.push({ 
+                            //         str1  : item.REQUEST_NO                                    
+                            //     });
+                            // }
+                            
+
+
                             for (i = 0; i < abc.length; i++) 
                             {
                                 if(i <= 4)
                                 {
-                                dict.push(abc[i].VENDOR_NAME +" ("+ abc[i].REQUEST_NO +")")
+                                   dict.push(abc[i].VENDOR_NAME +" ("+ abc[i].REQUEST_NO +")");
+                                    
+                                    
                                 }
 
                                 //choices = dic
                             }
+                           //  var test=JSON.stringify(choices);
+
+                            //  var namearray=[];
+                            //  namearray.push("vendorname"= abc[0].VENDOR_NAME);
+
+                            //  var employees = {
+                            //     namearray: []
+                            //     };
+
+                            //     employees.namearra.push({ 
+                            //         requestno:abc[0].REQUEST_NO                                    
+                            //             });
+
+                           //  salesData.push(str1:{ requestno:abc[0].REQUEST_NO })
+
+
+                            // session.send("%s",str1.ty);
+                            // salesData = {
+                            //  "str1": {
+                            //         requestno:abc[0].REQUEST_NO                              
+                            //     },
+                            //     str2: {
+                            //         requestno:abc[1].REQUEST_NO                              
+                            //     },
+                            //     str3: {
+                            //         requestno:abc[2].REQUEST_NO                              
+                            //     },
+                            // };
+                            
+                           // session.send("%s",JSON.stringify(dict));
                             if(abc.length > 4)
                             {
                                 session.send("More than 5 rows return please narrow your search.If name not found please narrow your search or resubmit the query");
-                                builder.Prompts.choice(session, "Select Name: ", dict,{listStyle:3});
+                                builder.Prompts.choice(session, "Select Name",dict,{listStyle:3});
                             }
-                        else{
-                            builder.Prompts.choice(session, "Select Name: ", dict,{listStyle:3});
-                        }
+                            else
+                            {
+                                    builder.Prompts.choice(session, "Select Name: ",dict,{listStyle:3});
+                            }
                         } 
                         //no record found  
                         else
@@ -353,8 +423,8 @@ bot.dialog('AllDetailsDialog',[
                 });   
             }   
         }
-       else
-       {
+        else
+        {
            //request no mantain in session
            if(session.conversationData[GlobalRequestNo]) 
            {
@@ -383,22 +453,34 @@ bot.dialog('AllDetailsDialog',[
            //request no not maintain in session
            else 
            {
-            session.conversationData[GloabalIntent]="Vendor.AllDetails";               
-            session.beginDialog('askForVendorName');             
-          //  session.endDialog(); 
+            //session.conversationData[GloabalIntent]="Vendor.AllDetails";               
+            //session.beginDialog('askForVendorName');  
+            session.send("It looks like you are looking for vendor details but you didn't mention vendor name, gst or pan. You may ask things like vendor details for ABC Ltd or vendor details for ABCPX0000G");           
+            session.endDialog(); 
            }
         
-       }  
+        }  
     },
     //Get Data for selected name
-      function (session, results) {          
-            var str = results.response.entity;
+      function (session, results) { 
+          
+      var str=results.response.entity;
+          //session.send("%s",JSON.stringify(results));    
+          
+        //   var region = salesData[results.response.entity];
+        //   session.send("%s",region.requestno); 
+
+
             if(results.response.entity)
             {
-           // var arr = new Array();
+            var arr = new Array();
+           // session.send("%s",);
+
+
             var arr = str.match(/\(([^)]+)\)/)[1];         
             var abc;
-            process.env.global_reqno_apiurl = process.env.ApiURLForRequestNumber + arr;            
+            process.env.global_reqno_apiurl = process.env.ApiURLForRequestNumber + arr;     
+
             Request.get({ url : process.env.global_reqno_apiurl,headers:{"Authorization" : auth}}, (error, response, body) => {
                 if(error) {
                    session.send("Geting error");
@@ -660,8 +742,10 @@ bot.dialog('GSTandPAN_NoDialog',[
         }
         else 
         {
-            session.conversationData[GloabalIntent]="Vendor.Number";               
-            session.beginDialog('askForVendorName');  
+            //session.conversationData[GloabalIntent]="Vendor.Number";               
+           // session.beginDialog('askForVendorName'); 
+           session.send("It looks like you are looking for vendor details but you didn't mention vendor name, gst or pan. You may ask things like vendor details for ABC Ltd or vendor details for ABCPX0000G");           
+           session.endDialog();  
         }      
     }
 },   
@@ -744,11 +828,6 @@ bot.dialog('GSTandPAN_NoDialog',[
 bot.dialog('ExtensionDialog',[
     function (session, args, next) {
 
-        //setintent
-       // intent = args.intent;
-       // session.conversationData[GloabalIntent] = intent.intent;    
-       // entity = builder.EntityRecognizer.findEntity(intent.entities, 'Name');
-
        if(args.Entity==true)
        {                
        }
@@ -800,17 +879,19 @@ bot.dialog('ExtensionDialog',[
                     var attachments = [];
 
                         var attachments = getCardsAttachmentsForExtensionList(session,abc);
+                        if(attachments.length>0)
+                        {
                         msg.attachments(attachments);
                         session.send(msg);
                         session.endDialog(); 
-                       
-
-
-
-                    //end adaptive
-                      //  session.send('ORGANISATION_NAME  : %s \n COMPANY_CODE: %s ',abc[0].EXTENSION_LIST[i].ORGANISATION_NAME,abc[0].EXTENSION_LIST[i].COMPANY_CODE +'<br>' );
-                     // } 
-                   
+                        }
+                        else
+                        {
+                            
+                            session.send("Extensions not available");
+                            session.endDialog(); 
+                        }
+                     
                 }
                 //for multiple record
                 else
@@ -858,16 +939,28 @@ bot.dialog('ExtensionDialog',[
                      msg.attachmentLayout(builder.AttachmentLayout.carousel);                   
                      var attachments = [];                                            
                      var attachments = getCardsAttachmentsForExtensionList(session,abc);
-                     msg.attachments(attachments);
-                     session.send(msg);
-                     session.endDialog(); 
+                     if(attachments.length>0)
+                        {
+                            msg.attachments(attachments);
+                            session.send(msg);
+                            session.endDialog(); 
+                        }
+                        else
+                        {
+                            
+                            session.send("Extensions not available");
+                            session.endDialog(); 
+                        }
                  }                            
              });                        
             }
             else 
             {
-               session.conversationData[GloabalIntent]="Vendor.Extensions";               
-               session.beginDialog('askForVendorName');  
+            //    session.conversationData[GloabalIntent]="Vendor.Extensions";               
+            //    session.beginDialog('askForVendorName');  
+            session.send("It looks like you are looking for vendor details but you didn't mention vendor name. You may ask things like extension for ABC Ltd");           
+            session.endDialog(); 
+
             }
         }   
       
@@ -890,9 +983,18 @@ bot.dialog('ExtensionDialog',[
                     msg.attachmentLayout(builder.AttachmentLayout.carousel);                   
                     var attachments = [];                                            
                     var attachments = getCardsAttachmentsForExtensionList(session,abc);
-                    msg.attachments(attachments);
-                    session.send(msg);
-                    session.endDialog(); 
+                    if(attachments.length>0)
+                    {
+                        msg.attachments(attachments);
+                        session.send(msg);
+                        session.endDialog(); 
+                    }
+                    else
+                    {
+                        
+                        session.send("Extensions not available");
+                        session.endDialog(); 
+                    }
             }                            
         }); 
         session.endDialog();
@@ -1078,8 +1180,8 @@ bot.dialog('AllDocumentDialog',[
             }
             else 
             {
-                session.conversationData[GloabalIntent]="Vendor.AllDocument";               
-                session.beginDialog('askForVendorName');  
+                session.send("It looks like you are looking for vendor details but you didn't mention vendor name. You may ask things like All document for ABC Ltd");           
+                session.endDialog(); 
             }
         }   
       
@@ -1207,7 +1309,7 @@ bot.dialog('MaterialDialog',[
                     // session.endDialog();
                 }
                 else{
-                    session.send('Data not available for material code : %s',session.conversationData[GlobalMaterialCode]+'Please narrow your search' );
+                    session.send('Data not available for material code : %s',session.conversationData[GlobalMaterialCode]);
                     session.endDialog();
                 }
         }                                 
@@ -1252,7 +1354,7 @@ bot.dialog('MaterialDialog',[
                   
                 }
                 else{
-                    session.send('Data Not Available for material Name : %s',session.conversationData[GlobalMaterialName]+'Please narrow your search' );
+                    session.send('Data Not Available for material Name : %s',session.conversationData[GlobalMaterialName]);
                     session.endDialog();
                 }
         }                                 
@@ -1294,7 +1396,7 @@ bot.dialog('MaterialDialog',[
 
             }  
             else{
-                session.send('Data Not Available for material code : %s',session.conversationData[GlobalMaterialCode]+'Please narrow your search' );
+                session.send('Data Not Available for material code : %s',session.conversationData[GlobalMaterialCode]);
                 session.endDialog();
             } 
         }
@@ -1304,7 +1406,9 @@ bot.dialog('MaterialDialog',[
       }
       else 
       {
-        session.beginDialog('askMoreAttribute');  
+        session.send("It looks like you are looking for vendor details but you didn't mention material name or code. You may ask things like material details for cement or material details for 200735");           
+        session.endDialog(); 
+        //session.beginDialog('askMoreAttribute');  
       }
     }
 
@@ -1432,7 +1536,9 @@ bot.dialog('ServiceDialog',[
       }
       else 
       {
-        session.beginDialog('askMoreAttributeForService');  
+        session.send("It looks like you are looking for vendor details but you didn't mention service name or code. You may ask things like service details for Fuel Charges or service details for 3001655");           
+        session.endDialog(); 
+        //session.beginDialog('askMoreAttributeForService');  
       }
     }
 
@@ -1773,45 +1879,102 @@ function getattachdocument(session,abc)
 //ask for vendor name in vendor details
 bot.dialog('askForVendorName', [
     function (session) {
-        builder.Prompts.text(session, "Please Enter Vendor Name");
+      //  session.dialogData.alarm = {};
+        builder.Prompts.text(session, "It looks like you are looking for vendor details but you didn't mention vendor name, gst or pan. You may ask things like vendor details for ABC Ltd or vendor details for ABCPX0000G");
     },
-    function (session,result) {
-        //session.endDialogWithResult(results);
-        session.conversationData[GlobalVendorName]= result.response;
-        session.conversationData[Gloabalentity]="Name";
-        //session.send("%s",result.response);
-
-        if(result.response.length > 3)
-        {
-            if(session.conversationData[GloabalIntent]=="Vendor.AllDocument")
-            {
-                session.beginDialog('AllDocumentDialog',{'Entity': true});
-        
-            }
-            else if(session.conversationData[GloabalIntent]=="Vendor.Number")
-            {
-                session.beginDialog('GSTandPAN_NoDialog',{'Entity': true});
-            }
-            else if(session.conversationData[GloabalIntent]=="Vendor.AllDetails")
-            {
-                session.beginDialog('AllDetailsDialog',{'Entity': true});
-            }  
-            else if(session.conversationData[GloabalIntent]=="Vendor.Extensions")
-            {
-                session.beginDialog('ExtensionDialog',{'Entity': true});
-            }      
-            else
-            {
-
-            }
+    function (session, results, next) {
+     
+        if (results.response) {
+            session.dialogData.name = results.response;
+         
+            if (results.response.length >= 3) {
+                
+                    session.send("%s",session.conversationData[GloabalIntent]);
+                    session.conversationData[GlobalVendorName]= results.response;
+                    session.conversationData[Gloabalentity]="Name";
+                  
+                        if(session.conversationData[GloabalIntent]=="Vendor.AllDocument")
+                        {
+                            session.beginDialog('AllDocumentDialog',{'Entity': true});
+                    
+                        }
+                        else if(session.conversationData[GloabalIntent]=="Vendor.Number")
+                        {
+                            session.beginDialog('GSTandPAN_NoDialog',{'Entity': true});
+                        }
+                        else if(session.conversationData[GloabalIntent]=="Vendor.AllDetails")
+                        {
+                            session.beginDialog('AllDetailsDialog',{'Entity': true});
+                        }  
+                        else if(session.conversationData[GloabalIntent]=="Vendor.Extensions")
+                        {
+                            session.beginDialog('ExtensionDialog',{'Entity': true});
+                        }      
+                        else
+                        {
+            
+                        }
+                    }
+                    else{
+                        session.send("Please enter at least 4 character in desacription or more");
+                        session.beginDialog('askForVendorName');  
+                        //next();
+                    }
+        } else {
+            next();
         }
-        else{
-            session.send("Please enter at least 4 character in desacription or more");
-            session.beginDialog('askForVendorName');  
-        }
-      
     }
-])
+    // function (session, next) {          
+    //    if(session){
+    //     builder.dialogData.text(session, "Please Enter Vendor Name");
+    //    }else{
+    //        next();
+    //    }
+            
+    //         //session.send("%s",JSON.parse(session));
+    //         console.log("session",session);
+    // },
+    // function (session,results) {
+     
+    //     //session.endDialogWithResult(results);
+    //     if (results.response.length >= 3) {
+    //         session.dialogData.time = builder.EntityRecognizer.resolveTime([results.response]);
+     
+    //     session.send("%s",session.conversationData[GloabalIntent]);
+    //     session.conversationData[GlobalVendorName]= results.response;
+    //     session.conversationData[Gloabalentity]="Name";
+   
+    //         if(session.conversationData[GloabalIntent]=="Vendor.AllDocument")
+    //         {
+    //             session.beginDialog('AllDocumentDialog',{'Entity': true});
+        
+    //         }
+    //         else if(session.conversationData[GloabalIntent]=="Vendor.Number")
+    //         {
+    //             session.beginDialog('GSTandPAN_NoDialog',{'Entity': true});
+    //         }
+    //         else if(session.conversationData[GloabalIntent]=="Vendor.AllDetails")
+    //         {
+    //             session.beginDialog('AllDetailsDialog',{'Entity': true});
+    //         }  
+    //         else if(session.conversationData[GloabalIntent]=="Vendor.Extensions")
+    //         {
+    //             session.beginDialog('ExtensionDialog',{'Entity': true});
+    //         }      
+    //         else
+    //         {
+
+    //         }
+    //     }
+    //     else{
+    //         session.send("Please enter at least 4 character in desacription or more");
+    //         session.beginDialog('askForVendorName');  
+    //         //next();
+    //     }
+    
+      
+    // }
+]);
 
 //ask attribute for material code
 bot.dialog('askMoreAttribute', [
@@ -2022,9 +2185,12 @@ bot.dialog('askForPendingorDetailsRequest', [
 }
 ])
 
+
+
 //adaptive card for vendor details
 function getCardsAttachmentsForVendorName(session,abc) {
 
+    var statusimage = getstatusURL(session,abc);
     
     var card = {
             'contentType': 'application/vnd.microsoft.card.adaptive',
@@ -2032,172 +2198,251 @@ function getCardsAttachmentsForVendorName(session,abc) {
                 "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                 "type": "AdaptiveCard",
                 "version": "1.0",
-                "body": [
+                "body": [                    
                     {
-                    "type": "ColumnSet",
-                    "columns": [
-                        {
-                            "type": "Column",
-                            "width": 3,
-                            "items": [
-                                    {
-                                        'type': 'TextBlock',
-                                        'text': 'Vendor Name:',
-                                        'weight': 'bolder',
-                                        
-                                    }]
-                        },
-                        {
-                            "type": "Column",
-                            "width": 7,
-                            "items": [
-                                    {
-                                                'type': 'TextBlock',
-                                                'text': abc[0].VENDOR_NAME,
-                                    }]
-                        }]
-                    },
-                    {
-                    "type": "ColumnSet",
-                    "columns": [
-                        {
-                            "type": "Column",
-                            "width": 3,
-                            "items": [
-                                    {
-                                        'type': 'TextBlock',
-                                        'text': 'Vendor Code:',
-                                        'weight': 'bolder',
-                                        
-                                    }]
-                        },
-                        {
-                            "type": "Column",
-                            "width": 7,
-                            "items": [
-                                    {
-                                                'type': 'TextBlock',
-                                                'text': abc[0].VENDOR_CODE,
-                                    }]
-                        }]
-                    },
-                    {
-                        "type": "ColumnSet",
-                        "columns": [
+                        "type": "Container",
+                        "items": [
                             {
-                                "type": "Column",
-                                "width": 3,
-                                "items": [
-                                        {
-                                            'type': 'TextBlock',
-                                            'text': 'Request No:',
-                                            'weight': 'bolder',
-                                        }]
-                            },
-                            {
-                                "type": "Column",
-                                "width":7,
-                                "items": [
-                                        {
-                                                    'type': 'TextBlock',
-                                                    'text': abc[0].REQUEST_NO,
-                                        }]
-                            }]
-                    },
-                    {
-                            "type": "ColumnSet",
-                            "columns": [
-                                {
-                                    "type": "Column",
-                                    "width": 3,
-                                    "items": [
-                                            {
-                                                'type': 'TextBlock',
-                                                'text': 'Status:',
-                                                'weight': 'bolder',
-                                            }]
-                                },
-                                {
-                                    "type": "Column",
-                                    "width": 7,
-                                    "items": [
-                                            {
-                                                        'type': 'TextBlock',
-                                                        'text': abc[0].STATUS,
-                                            }]
-                                }]
-                    },
-                    {
                                 "type": "ColumnSet",
                                 "columns": [
                                     {
                                         "type": "Column",
-                                        "width": 3,
                                         "items": [
-                                                {
-                                                    'type': 'TextBlock',
-                                                    'text': 'Approved By:',
-                                                    'weight': 'bolder',
-                                                }]
+                                            {
+                                                "type": "TextBlock",
+                                                "size": "Medium",
+                                                "weight": "Bolder",
+                                                "text": abc[0].VENDOR_NAME,
+                                                "wrap": true
+                                            },
+                                            {
+                                                "type": "TextBlock",
+                                                "spacing": "None",
+                                                "text": abc[0].VENDOR_CODE,
+                                                "isSubtle": true,
+                                                "wrap": true
+                                            }
+                                        ],
+                                        "width": "stretch"
                                     },
                                     {
                                         "type": "Column",
-                                        "width":7,
                                         "items": [
-                                                {
-                                                            'type': 'TextBlock',
-                                                            'text': abc[0].APPROVED_BY,
-                                                }]
-                                    }]
+                                            {
+                                                "type": "Image",
+                                                "style": "Person",
+                                                "url":statusimage,
+                                                "size": "small"
+                                            }
+                                        ],
+                                        "width": "auto"
+                                    },
+
+                                ] }
+                            ]
                     },
                     {
-                                    "type": "ColumnSet",
-                                    "columns": [
+                        "type": "Container",
+                        "separator": true,
+                        "items": [
+                            {
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "items": [
                                         {
-                                            "type": "Column",
-                                            "width": 3,
-                                            "items": [
-                                                    {
-                                                        'type': 'TextBlock',
-                                                        'text': 'PAN No:',
-                                                        'weight': 'bolder',
-                                                    }]
+                                            "type": "TextBlock",
+                                            "size": "Medium",
+                                            "weight": "Bolder",
+                                            "text": "PAN No:",
+                                            
                                         },
+                                       
+                                    ],
+                                    "width": 2
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
                                         {
-                                            "type": "Column",
-                                            "width":7,
-                                            "items": [
-                                                    {
-                                                                'type': 'TextBlock',
-                                                                'text': abc[0].PAN_NO,
-                                                    }]
-                                        }]
+                                            "type": "TextBlock",
+                                            "size": "Medium",                                           
+                                            "text": abc[0].PAN_NO,
+                                           
+                                        }
+                                    ],
+                                    "width": 3
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "size": "Medium",
+                                            "weight": "Bolder",
+                                            "text": "GST No:",
+                                           
+                                        },
+                                       
+                                    ],
+                                    "width": 2
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "size": "Medium",                                            
+                                            "text": abc[0].GST_NO,
+                                          
+                                        }
+                                    ],
+                                    "width": 3
+                                },
+
+
+
+                            ] }
+                        ]
+
                     },
                     {
-                        "type": "ColumnSet",
-                        "columns": [
+                        "type": "Container",
+                        "items": [
                             {
-                                "type": "Column",
-                                "width": 3,
-                                "items": [
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "items": [
                                         {
-                                            'type': 'TextBlock',
-                                            'text': 'GST No:',
-                                            'weight': 'bolder',
-                                        }]
-                            },
+                                            "type": "TextBlock",
+                                            "size": "Medium",
+                                            "weight": "Bolder",
+                                            "text": "Status:",
+                                            
+                                        },
+                                       
+                                    ],
+                                    "width": 2
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "size": "Medium",                                           
+                                            "text": abc[0].STATUS,
+                                           
+                                        }
+                                    ],
+                                    "width": 3
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "size": "Medium",
+                                            "weight": "Bolder",
+                                            "text": "By:",
+                                           
+                                        },
+                                       
+                                    ],
+                                    "width": 2
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "size": "Medium",                                            
+                                            "text": abc[0].APPROVED_BY,
+                                          
+                                        }
+                                    ],
+                                    "width": 3
+                                },
+
+
+
+                            ] }
+                        ]
+
+                    },
+                    {
+                        "type": "Container",
+                        "items": [
                             {
-                                "type": "Column",
-                                "width":7,
-                                "items": [
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "items": [
                                         {
-                                                    'type': 'TextBlock',
-                                                    'text': abc[0].GST_NO,
-                                        }]
-                            }]
-                    },      
-                                        
-                                      
+                                            "type": "TextBlock",
+                                            "size": "Medium",
+                                            "weight": "Bolder",
+                                            "text": "Request Number:",
+                                            
+                                        },
+                                       
+                                    ],
+                                    "width": 3
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "size": "Medium",                                           
+                                            "text": abc[0].REQUEST_NO,
+                                           
+                                        }
+                                    ],
+                                    "width": 7
+                                }
+                          ] }
+                        ]
+
+                    }
+                            // {
+                            //     "type": "FactSet",
+                            //     "facts": [
+                            //         {
+                            //             "title": "Vendor Name:",
+                            //             "value": abc[0].VENDOR_NAME
+                            //         },
+                            //         {
+                            //             "title": "Vendor Code:",
+                            //             "value": abc[0].VENDOR_CODE
+                            //         },
+                            //         {
+                            //             "title": "Request No:",
+                            //             "value": abc[0].REQUEST_NO
+                            //         },
+                            //         {
+                            //             "title": "Status:",
+                            //             "value": abc[0].STATUS
+                            //         },
+                            //         {
+                            //             "title": "Approved By:",
+                            //             "value": abc[0].APPROVED_BY
+                            //         },
+                            //         {
+                            //             "title": "PAN No:",
+                            //             "value": abc[0].PAN_NO
+                            //         },
+                            //         {
+                            //             "title": "GST No:",
+                            //             "value": abc[0].GST_NO
+                            //         },
+                            //     ]
+                            // }
+                       
+                              
                    ]//body close
                 }//content
             };
@@ -2586,29 +2831,6 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                                                     "text": abc[i].REQUEST_DATE,
                                                         }]
                                             }]
-                        },
-                        {
-                                            "type": "ColumnSet",
-                                            "columns": [
-                                                {
-                                                    "type": "Column",
-                                                    "width": 4,
-                                                    "items": [
-                                                            {
-                                                                "type": "TextBlock",
-                                                                "text": "Material Type:",
-                                                                "weight": "bolder",
-                                                            }]
-                                                },
-                                                {
-                                                    "type": "Column",
-                                                    "width":6,
-                                                    "items": [
-                                                            {
-                                                                        "type": "TextBlock",
-                                                                        "text": abc[i].MATERIAL_TYPE,
-                                                            }]
-                                                }]
                         },
                         {
                             "type": "ColumnSet",
@@ -3197,3 +3419,21 @@ bot.dialog('SmalltalkDialog',[
 ]).triggerAction({
     matches:'SmallTalk'
 })
+
+function getstatusURL(session,abc)
+{
+    var url;
+    if(abc[0].STATUS =="Approved")
+    {
+       url="http://118.67.249.4:85/UAT_VRM/assets/img/approved1.png"; 
+    }
+    else if(abc[0].STATUS =="Cancel")
+    {
+        url="http://118.67.249.4:85/UAT_VRM/assets/img/cancel.png"; 
+    }
+    else if(abc[0].STATUS =="Resubmit")
+    {
+        url="http://118.67.249.4:85/UAT_VRM/assets/img/reject.png";
+    }
+    return url;
+}
