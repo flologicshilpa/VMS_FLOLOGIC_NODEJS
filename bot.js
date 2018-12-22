@@ -2390,7 +2390,7 @@ function getCardsAttachmentsForVendorName(session,abc) {
                                         },
                                        
                                     ],
-                                    "width": 3
+                                    "width": "auto"
                                 },
                                 {
                                     "type": "Column",
@@ -2402,7 +2402,7 @@ function getCardsAttachmentsForVendorName(session,abc) {
                                            
                                         }
                                     ],
-                                    "width": 7
+                                    "width": "auto"
                                 }
                           ] }
                         ]
