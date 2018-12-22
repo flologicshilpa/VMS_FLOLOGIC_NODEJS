@@ -455,7 +455,9 @@ bot.dialog('AllDetailsDialog',[
            {
             //session.conversationData[GloabalIntent]="Vendor.AllDetails";               
             //session.beginDialog('askForVendorName');  
-            session.send("It looks like you are looking for vendor details but you didn't mention vendor name, gst or pan. You may ask things like vendor details for ABC Ltd or vendor details for ABCPX0000G");           
+            var msgfornodata = new builder.Message();    
+            msgfornodata.text("It looks like you are looking for “Vendor details” but you didn't mention _vendor name, gst or pan_.\n You may ask things like “vendor details for _ABC Ltd_” or “vendor details for _ABCPX0000G_” ");        
+            session.send(msgfornodata);
             session.endDialog(); 
            }
         
@@ -541,19 +543,11 @@ bot.dialog('GSTandPAN_NoDialog',[
                 else if(builder.EntityRecognizer.findEntity(intent.entities,'Channel_Partner_Agreement'))
                 {
                     session.conversationData[Gloabalentity1] ="Channel_Partner_Agreement";
-                }
-                // else if(builder.EntityRecognizer.findEntity(intent.entities,'Company_Registration'))
-                // {
-                //     session.conversationData[Gloabalentity1] ="Company_Registration";
-                // }
+                }              
                 else if(builder.EntityRecognizer.findEntity(intent.entities,'EM_Certificate'))
                 {
                     session.conversationData[Gloabalentity1] ="EM_Certificate";
-                }
-                // else if(builder.EntityRecognizer.findEntity(intent.entities,'IOM/Approval'))
-                // {
-                //     session.conversationData[Gloabalentity1] ="IOM/Approval";
-                // }
+                }               
                 else if(builder.EntityRecognizer.findEntity(intent.entities,'PF_Certificate'))
                 {
                     session.conversationData[Gloabalentity1] ="PF_Certificate";
@@ -566,14 +560,6 @@ bot.dialog('GSTandPAN_NoDialog',[
                 {
                     session.conversationData[Gloabalentity1] ="RERA_Certificate";
                 }
-                // else if(builder.EntityRecognizer.findEntity(intent.entities,'ST_Certificate'))
-                // {
-                //     session.conversationData[Gloabalentity1] ="ST_Certificate";
-                // }
-                // else if(builder.EntityRecognizer.findEntity(intent.entities,'VAT_Certificate'))
-                // {
-                //     session.conversationData[Gloabalentity1] ="VAT_Certificate";
-                // }              
                 else
                 {
                     session.conversationData[Gloabalentity1] ="none";
@@ -744,7 +730,10 @@ bot.dialog('GSTandPAN_NoDialog',[
         {
             //session.conversationData[GloabalIntent]="Vendor.Number";               
            // session.beginDialog('askForVendorName'); 
-           session.send("It looks like you are looking for vendor details but you didn't mention vendor name, gst or pan. You may ask things like vendor details for ABC Ltd or vendor details for ABCPX0000G");           
+           var msgfornodata = new builder.Message();    
+            msgfornodata.text("It looks like you are looking for “pan no” or “gst no” but you didn't mention _vendor name.\n You may ask things like “pan no for _ABC Ltd_” or “gst no for _ABC Ltd_” ");        
+            session.send(msgfornodata);
+          // session.send("It looks like you are looking for vendor details but you didn't mention vendor name, gst or pan. You may ask things like vendor details for ABC Ltd or vendor details for ABCPX0000G");           
            session.endDialog();  
         }      
     }
@@ -958,9 +947,10 @@ bot.dialog('ExtensionDialog',[
             {
             //    session.conversationData[GloabalIntent]="Vendor.Extensions";               
             //    session.beginDialog('askForVendorName');  
-            session.send("It looks like you are looking for vendor details but you didn't mention vendor name. You may ask things like extension for ABC Ltd");           
-            session.endDialog(); 
-
+                var msgfornodata = new builder.Message();    
+                msgfornodata.text("It looks like you are looking for “extensions” or “associations” but you didn't mention _vendor name_.\n You may ask things like “extension for _ABC Ltd_” or “association for _ABC Ltd_” ");        
+                session.send(msgfornodata);           
+                session.endDialog();  
             }
         }   
       
@@ -1180,7 +1170,10 @@ bot.dialog('AllDocumentDialog',[
             }
             else 
             {
-                session.send("It looks like you are looking for vendor details but you didn't mention vendor name. You may ask things like All document for ABC Ltd");           
+                var msgfornodata = new builder.Message();    
+                msgfornodata.text("It looks like you are looking for “All document” or “document” but you didn't mention _vendor name_.\n You may ask things like “All documents for _ABC Ltd_” or “documents for _ABC Ltd_” ");        
+                session.send(msgfornodata);   
+                // session.send("It looks like you are looking for vendor details but you didn't mention vendor name. You may ask things like All document for ABC Ltd");           
                 session.endDialog(); 
             }
         }   
@@ -1406,7 +1399,10 @@ bot.dialog('MaterialDialog',[
       }
       else 
       {
-        session.send("It looks like you are looking for vendor details but you didn't mention material name or code. You may ask things like material details for cement or material details for 200735");           
+        var msgfornodata = new builder.Message();    
+        msgfornodata.text("It looks like you are looking for “Material Details” or but you didn't mention _material name_ or _material code_.\n You may ask things like “material details for _GRASS CARPET_” or “material details for _200131_” ");        
+        session.send(msgfornodata);   
+        // session.send("It looks like you are looking for vendor details but you didn't mention vendor name. You may ask things like All document for ABC Ltd");           
         session.endDialog(); 
         //session.beginDialog('askMoreAttribute');  
       }
@@ -1536,8 +1532,12 @@ bot.dialog('ServiceDialog',[
       }
       else 
       {
-        session.send("It looks like you are looking for vendor details but you didn't mention service name or code. You may ask things like service details for Fuel Charges or service details for 3001655");           
+        var msgfornodata = new builder.Message();    
+        msgfornodata.text("It looks like you are looking for “Service Details” or but you didn't mention _service name_ or _service code_.\n You may ask things like “service details for _Fuel Charges_” or “service details for _3001655_” ");        
+        session.send(msgfornodata);   
+        // session.send("It looks like you are looking for vendor details but you didn't mention vendor name. You may ask things like All document for ABC Ltd");           
         session.endDialog(); 
+        
         //session.beginDialog('askMoreAttributeForService');  
       }
     }
