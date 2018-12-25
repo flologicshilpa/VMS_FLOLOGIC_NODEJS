@@ -65,7 +65,10 @@ var inMemoryStorage = new builder.MemoryBotStorage();
 
 //universal bot connection
 const  bot = module.exports =  new builder.UniversalBot(connector, function (session, args) {  
-    
+     function (session) {
+        var reply = createEvent("changeBackground", session.message.text, session.message.address);
+        session.endDialog(reply);
+    }
  }).set('storage', inMemoryStorage); 
 
 
@@ -76,19 +79,24 @@ const LuisModelUrl1 = process.env.LuisModelUrl || process.env.baseUrl; //'https:
 var recognizer = new builder.LuisRecognizer(LuisModelUrl1);
 bot.recognizer(recognizer);
 
-
+const createEvent = (eventName, value, address) => {
+    var msg = new builder.Message().address(address);
+    msg.data.type = "event";
+    msg.data.name = eventName;
+    msg.data.value = value;
+    return msg;
+}
 
 
 
 bot.on("event", function (event) {
     var msg = new builder.Message().address(event.address);
-    if (event.name === "customEvent") {
-        // HOW CAN I STORE event.value IN session.userData ? 
-      //  console.log(event.value);
-        session.send("%s",event.value)
+    msg.data.textLocale = "en-us";
+    if (event.name === "buttonClicked") {
+        msg.data.text = "I see that you clicked a button.";
     }
-});
-
+    bot.send(msg);
+})
 
 //for small talk
 
