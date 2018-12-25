@@ -94,8 +94,9 @@ bot.on("event", function (event,session) {
     msg.data.textLocale = "en-us";
     if (event.name === "buttonClicked") {
         msg.data.text = "I see that you clicked a button.";
-         session.conversationData = {};
-        session.beginDialog('GreetingDialog');  
+         //session.conversationData = {};
+         bot.beginDialog(message.from.address, '/GreetingDialog');
+        //session.beginDialog('GreetingDialog');  
     }
     bot.send(msg);
 })
