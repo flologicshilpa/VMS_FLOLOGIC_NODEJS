@@ -2666,7 +2666,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                 "items": [
                                         {
                                             "type": "TextBlock",
-                                            "text": "Material Group:",
+                                            "text": "Group:",
                                             "weight": "bolder",
                                         }]
                             },
@@ -2773,7 +2773,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                             "columns": [
                                 {
                                     "type": "Column",
-                                    "width": 3,
+                                    "width": 4,
                                     "items": [
                                             {
                                                 "type": "TextBlock",
@@ -2783,7 +2783,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                 },
                                 {
                                     "type": "Column",
-                                    "width":7,
+                                    "width":6,
                                     "items": [
                                             {
                                                         "type": "TextBlock",
@@ -2796,7 +2796,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                 "columns": [
                                     {
                                         "type": "Column",
-                                        "width": 3,
+                                        "width": 4,
                                         "items": [
                                                 {
                                                     'type': 'TextBlock',
@@ -2806,7 +2806,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                     },
                                     {
                                         "type": "Column",
-                                        "width":7,
+                                        "width":6,
                                         "items": [
                                                 {
                                                             "type": "TextBlock",
