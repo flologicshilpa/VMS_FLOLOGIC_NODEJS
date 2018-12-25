@@ -95,10 +95,11 @@ bot.on("event", function (event) {
     if (event.name === "buttonClicked") {
         msg.data.text = "I see that you clicked a button.";
          //session.conversationData = {};
-         bot.beginDialog(message.from.address, '/GreetingDialog');
+       
         //session.beginDialog('GreetingDialog');  
     }
     bot.send(msg);
+     bot.beginDialog(message.from.address, '/GreetingDialog');
 })
 
 //for small talk
