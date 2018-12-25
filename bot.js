@@ -2188,7 +2188,7 @@ bot.dialog('askForPendingorDetailsRequest', [
 //adaptive card for vendor details
 function getCardsAttachmentsForVendorName(session,abc) {
 
-    var statusimage = getstatusURL(session,abc);
+     var statusimage = getstatusURL(session,abc[0].STATUS);
     
     var card = {
             'contentType': 'application/vnd.microsoft.card.adaptive',
@@ -2581,15 +2581,17 @@ function getCardsAttachmentsForMaterialextension(session,abc)
 }
 
 //adaptive card for MaterialDetails
+//adaptive card for MaterialDetails
 function getCardsAttachmentsForMaterialDetails(session,abc)
 {  
         var attachments=[];
         var i,j;
         var extensionlist="";
+       var statusimage;
 
         for(i=0;i<abc.length;i++)
         {
-
+            
             //loop for find extension list 
             for(j=0;j<abc[i].EXTENSION_LIST.length;j++)
             {
@@ -2599,6 +2601,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                 }
             }
 
+            statusimage = getstatusURL(session,abc[i].REQUEST_STATUS);
             //adaptive
             var card = {
                 "contentType": "application/vnd.microsoft.card.adaptive",
@@ -2607,51 +2610,59 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                     "type": "AdaptiveCard",
                     "version": "1.0",
                     "body": [
-                        {                                          
+
+                        {
                             "type": "Container",
                             "items": [
-                              {
-                                "type": "TextBlock",
-                                "text": (i+1) + "/" + abc.length,                                               
-                                "color":"red",
-                                "weight": "bolder",
-                                "size": "medium"
-                              },
-                            ]
+                                {
+                                    "type": "ColumnSet",
+                                    "columns": [
+                                        {
+                                            "type": "Column",
+                                            "items": [
+                                                {
+                                                    "type": "TextBlock",
+                                                    "size": "Medium",
+                                                    "weight": "Bolder",
+                                                    "text": abc[0].MATERIAL_DESCRIPTION,
+                                                    "wrap": true
+                                                },
+                                                {
+                                                    "type": "TextBlock",
+                                                    "spacing": "None",
+                                                    "text": abc[0].MATERIAL_NUMBER,
+                                                    "isSubtle": true,
+                                                    "wrap": true
+                                                }
+                                            ],
+                                            "width": "stretch"
+                                        },
+                                        {
+                                            "type": "Column",
+                                            "items": [
+                                                {
+                                                    "type": "Image",
+                                                    "style": "Person",
+                                                    "url":statusimage,
+                                                    "size": "small"
+                                                }
+                                            ],
+                                            "width": "auto"
+                                        },
+    
+                                    ] }
+                                ]
                         },
                         {
                          "type": "Container",
                          "separator": true,
                          "items": [
                         {
-                                "type": "ColumnSet",
-                                "columns": [
-                                    {
-                                        "type": "Column",
-                                        "width": 4,
-                                        "items": [
-                                                {
-                                                    "type": "TextBlock",
-                                                    "text": "Material Code:",
-                                                    "weight": "bolder",
-                                                }]
-                                    },
-                                    {
-                                        "type": "Column",
-                                        "width":6,
-                                        "items": [
-                                                {
-                                                            "type": "TextBlock",
-                                                            "text": abc[i].MATERIAL_NUMBER,
-                                                }]
-                                    }]
-                        },
-                        {
                         "type": "ColumnSet",
                         "columns": [
                             {
                                 "type": "Column",
-                                "width": 4,
+                                "width": 3,
                                 "items": [
                                         {
                                             "type": "TextBlock",
@@ -2661,112 +2672,40 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                             },
                             {
                                 "type": "Column",
-                                "width":6,
+                                "width":3,
                                 "items": [
                                         {
                                                     "type": "TextBlock",
                                                     "text": abc[i].MATERIAL_GROUP,
                                         }]
-                            }]
-                        },
-                        {
-                        "type": "ColumnSet",
-                        "columns": [
+                            },
                             {
                                 "type": "Column",
-                                "width": 4,
+                                "width": 2,
                                 "items": [
                                         {
                                             "type": "TextBlock",
-                                            "text": "Material Type:",
+                                            "text": "Status:",
                                             "weight": "bolder",
                                         }]
                             },
                             {
                                 "type": "Column",
-                                "width":6,
+                                "width":2,
                                 "items": [
                                         {
                                                     "type": "TextBlock",
-                                                    "text": abc[i].MATERIAL_TYPE,
+                                                    "text": abc[i].MATERIAL_STATUS,
                                         }]
-                            }]
-                        },
-                        {
-                            "type": "ColumnSet",
-                            "columns": [
-                                {
-                                    "type": "Column",
-                                    "width": 4,
-                                    "items": [
-                                            {
-                                                "type": "TextBlock",
-                                                "text": "Material Status:",
-                                                "weight": "bolder",
-                                            }]
-                                },
-                                {
-                                    "type": "Column",
-                                    "width":6,
-                                    "items": [
-                                            {
-                                                        "type": "TextBlock",
-                                                        "text": abc[i].MATERIAL_STATUS,
-                                            }]
-                                }]
-                        },
-                        {
-                                "type": "ColumnSet",
-                                "columns": [
-                                    {
-                                        "type": "Column",
-                                        "width": 4,
-                                        "items": [
-                                                {
-                                                    'type': 'TextBlock',
-                                                    'text': 'Material Description:',
-                                                    'weight': 'bolder',
-                                                }]
-                                    },
-                                    {
-                                        "type": "Column",
-                                        "width":6,
-                                        "items": [
-                                                {
-                                                            "type": "TextBlock",
-                                                            "text": abc[i].MATERIAL_DESCRIPTION,
-                                                }]
-                                    }]
-                        },
-                        {
-                            "type": "ColumnSet",
-                            "columns": [
-                                {
-                                    "type": "Column",
-                                    "width": 4,
-                                    "items": [
-                                            {
-                                                "type": 'TextBlock',
-                                                "text": 'HSN Code:',
-                                                "weight": 'bolder',
-                                            }]
-                                },
-                                {
-                                    "type": "Column",
-                                    "width":6,
-                                    "items": [
-                                            {
-                                                        "type": "TextBlock",
-                                                        "text": abc[i].HSN_CODE,
-                                            }]
-                                }]
+                            }
+                        ]
                         },
                         {
                         "type": "ColumnSet",
                         "columns": [
                             {
                                 "type": "Column",
-                                "width": 4,
+                                "width": 3,
                                 "items": [
                                         {
                                             "type": "TextBlock",
@@ -2776,80 +2715,56 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                             },
                             {
                                 "type": "Column",
-                                "width":6,
+                                "width":3,
                                 "items": [
                                         {
                                                     "type": "TextBlock",
                                                     "text": abc[i].HSN_DESCRIPTION,
                                         }]
-                            }]
-                        },
-                        {
-                                    "type": "ColumnSet",
-                                    "columns": [
+                            },
+                            {
+                                "type": "Column",
+                                "width": 2,
+                                "items": [
                                         {
-                                            "type": "Column",
-                                            "width": 4,
-                                            "items": [
-                                                    {
-                                                        "type": "TextBlock",
-                                                        "text": "Request Status:",
-                                                        "weight": "bolder",
-                                                    }]
-                                        },
-                                        {
-                                            "type": "Column",
-                                            "width":6,
-                                            "items": [
-                                                    {
-                                                                "type": "TextBlock",
-                                                                "text": abc[i].REQUEST_STATUS,
-                                                    }]
+                                            "type": "TextBlock",
+                                            "text": "HSN Code:",
+                                            "weight": "bolder",
                                         }]
-                        },
-                        {
-                                        "type": "ColumnSet",
-                                        "columns": [
-                                            {
-                                                "type": "Column",
-                                                "width": 4,
-                                                "items": [
-                                                        {
-                                                            "type": "TextBlock",
-                                                            "text": "Request Date:",
-                                                            "weight": "bolder",
-                                                        }]
-                                            },
-                                            {
-                                                "type": "Column",
-                                                "width":6,
-                                                "items": [
-                                                        {
-                                                                    "type": "TextBlock",
-                                                                    "text": abc[i].REQUEST_DATE,
-                                                        }]
-                                            }]
+                            },
+                            {
+                                "type": "Column",
+                                "width":2,
+                                "items": [
+                                        {
+                                                    "type": "TextBlock",
+                                                    "text": abc[i].HSN_CODE,
+                                        }]
+                            }
+                        
+                        
+                        ]
                         },
                         {
                             "type": "ColumnSet",
                             "columns": [
                                 {
                                     "type": "Column",
-                                    "width": 4,
+                                    "width": 3,
                                     "items": [
                                             {
                                                 "type": "TextBlock",
-                                                "text": "Valuation Class:",
+                                                "text": "Material Type:",
                                                 "weight": "bolder",
                                             }]
                                 },
                                 {
                                     "type": "Column",
-                                    "width":6,
+                                    "width":7,
                                     "items": [
                                             {
                                                         "type": "TextBlock",
-                                                        "text": abc[i].VALUATION_CLASS,
+                                                        "text": abc[i].MATERIAL_TYPE,
                                             }]
                                 }]
                         },
@@ -2858,17 +2773,63 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                             "columns": [
                                 {
                                     "type": "Column",
-                                    "width": 4,
+                                    "width": 3,
                                     "items": [
                                             {
                                                 "type": "TextBlock",
-                                                "text": "Extension List(Plant Name):",
+                                                "text": "Request Status:",
                                                 "weight": "bolder",
                                             }]
                                 },
                                 {
                                     "type": "Column",
-                                    "width":6,
+                                    "width":7,
+                                    "items": [
+                                            {
+                                                        "type": "TextBlock",
+                                                        "text": abc[i].REQUEST_STATUS + " ("+abc[i].REQUEST_DATE+")",
+                                            }]
+                                }]
+                        },
+                        {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": 3,
+                                        "items": [
+                                                {
+                                                    'type': 'TextBlock',
+                                                    'text': 'Valuation Class:',
+                                                    'weight': 'bolder',
+                                                }]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width":7,
+                                        "items": [
+                                                {
+                                                            "type": "TextBlock",
+                                                            "text": abc[i].VALUATION_CLASS,
+                                                }]
+                                    }]
+                        },
+                        {
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "width": 3,
+                                    "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Extension List:",
+                                                "weight": "bolder",
+                                            }]
+                                },
+                                {
+                                    "type": "Column",
+                                    "width":7,
                                     "items": [
                                             {
                                                         "type": "TextBlock",
@@ -2879,8 +2840,20 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
 
 
                     ]
-                        }
-                                          
+                        },
+                        {                                          
+                            "type": "Container",
+                            "separator": true,
+                            "items": [
+                              {
+                                "type": "TextBlock",
+                                "text": (i+1) + "/" + abc.length,                                               
+                                "color":"red",
+                                "weight": "bolder",
+                                "size": "medium"
+                              },
+                            ]
+                        },                 
                        ]//body close
                     }//content
                 }//card
@@ -3418,20 +3391,20 @@ bot.dialog('SmalltalkDialog',[
     matches:'SmallTalk'
 })
 
-function getstatusURL(session,abc)
+function getstatusURL(session,status)
 {
     var url;
-    if(abc[0].STATUS =="Approved")
+    if(status=="Approved" || status=="Submit")
     {
        url="http://118.67.249.4:85/UAT_VRM/assets/img/approved1.png"; 
     }
-    else if(abc[0].STATUS =="Cancel")
+    else if(status =="Cancel")
     {
         url="http://118.67.249.4:85/UAT_VRM/assets/img/cancel.png"; 
     }
-    else if(abc[0].STATUS =="Resubmit")
+    else if(status =="Resubmit" )
     {
-        url="http://118.67.249.4:85/UAT_VRM/assets/img/reject.png";
+        url="http://118.67.249.4:85/UAT_VRM/assets/img/resubmite.png";
     }
     return url;
 }
