@@ -136,8 +136,7 @@ bot.dialog('GreetingDialog',[
                 "type": "TextBlock",
                 "text": " _**“Vendor details for Kshetra”**_ "+
                 "\r _**“My pending request”**_ " +
-                "\n _**“My requests”**_ " +
-                "\n _**“Request details for jdoe@godrehproperties.com”**_ " +
+                "\n _**“My requests”**_ " +               
                 "\n _**“Service details”**_ " +
                 "\n _**“Service details for 3001655”**_ " +
                 "\n _**“Material detail”**_ " +
@@ -171,7 +170,7 @@ bot.dialog('endConversationDialog',[
         var name=session.message.user.name;
         var id=session.message.user.id;
         var token1 = session.message.user.token;
-        auth = "Basic " + new Buffer("NSAMARTH" + ":" + "1234567890").toString("base64");
+        auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
         intent = args.intent;
         
         
@@ -198,8 +197,7 @@ bot.dialog('endConversationDialog',[
                         "type": "TextBlock",
                         "text": " _**“Vendor details for Kshetra”**_ "+
                         "\r _**“My pending request”**_ " +
-                        "\n _**“My requests”**_ " +
-                        "\n _**“Request details for jdoe@godrehproperties.com”**_ " +
+                        "\n _**“My requests”**_ " +                        
                         "\n _**“Service details”**_ " +
                         "\n _**“Service details for 3001655”**_ " +
                         "\n _**“Material detail”**_ " +
@@ -217,7 +215,7 @@ bot.dialog('endConversationDialog',[
                 var msg = new builder.Message()
                 .addAttachment(card)
                 session.send(msg);
-        session.send('You have quite current conversation. New conversation start type your query')              
+        session.send("You have stopped current conversation! that is okay,just ping me when you are ready and we can chat again.")            
        // session.send('I am sorry I did not understand your question. Please retry the query or you may startover by clicking the start over button');        
         session.endDialog();
     }
