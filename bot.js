@@ -65,10 +65,10 @@ var inMemoryStorage = new builder.MemoryBotStorage();
 
 //universal bot connection
 const  bot = module.exports =  new builder.UniversalBot(connector, function (session, args) {  
-     function (session) {
+    
         var reply = createEvent("changeBackground", session.message.text, session.message.address);
         session.endDialog(reply);
-    }
+   
  }).set('storage', inMemoryStorage); 
 
 
