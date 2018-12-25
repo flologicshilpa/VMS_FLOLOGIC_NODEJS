@@ -89,11 +89,13 @@ const createEvent = (eventName, value, address) => {
 
 
 
-bot.on("event", function (event) {
+bot.on("event", function (event,session) {
     var msg = new builder.Message().address(event.address);
     msg.data.textLocale = "en-us";
     if (event.name === "buttonClicked") {
         msg.data.text = "I see that you clicked a button.";
+         session.conversationData = {};
+        session.beginDialog('GreetingDialog');  
     }
     bot.send(msg);
 })
