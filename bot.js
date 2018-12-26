@@ -2742,7 +2742,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                 },
                                 {
                                     "type": "Column",
-                                    "width":6,
+                                     "width": "auto",
                                     "items": [
                                             {
                                                         "type": "TextBlock",
@@ -2765,7 +2765,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                 },
                                 {
                                     "type": "Column",
-                                    "width":6,
+                                    "width": "auto",
                                     "items": [
                                             {
                                                         "type": "TextBlock",
@@ -2788,7 +2788,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                 },
                                 {
                                     "type": "Column",
-                                    "width":6,
+                                     "width": "auto",
                                     "items": [
                                             {
                                                         "type": "TextBlock",
@@ -2811,7 +2811,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                 },
                                 {
                                     "type": "Column",
-                                    "width":6,
+                                     "width": "auto",
                                     "items": [
                                             {
                                                         "type": "TextBlock",
@@ -2834,7 +2834,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                     },
                                     {
                                         "type": "Column",
-                                        "width":6,
+                                         "width": "auto",
                                         "items": [
                                                 {
                                                             "type": "TextBlock",
@@ -2857,7 +2857,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                 },
                                 {
                                     "type": "Column",
-                                    "width":6,
+                                     "width": "auto",
                                     "items": [
                                             {
                                                         "type": "TextBlock",
