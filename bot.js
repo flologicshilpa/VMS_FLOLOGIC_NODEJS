@@ -101,7 +101,7 @@ bot.on("event",function(event) {
         //session.beginDialog('GreetingDialog');  
     }
     //bot.send(msg);
-    bot.beginDialog(address,'GreetingDialog');
+    bot.beginDialog(address,'endConversationDialog');
    
     // bot.beginDialog(msg,'/GreetingDialog');
     // bot.beginDialog(message.from.address, '/GreetingDialog');
@@ -119,9 +119,7 @@ bot.dialog('GreetingDialog',[
         
         var id=session.message.user.id;
         var token1 = session.message.user.token;
-        session.send("%s",name);
-         session.send("%s",id);
-        session.send("%s",token1);
+        
         
         
         auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
@@ -195,13 +193,17 @@ bot.dialog('endConversationDialog',[
         var name=session.message.user.name;
         var id=session.message.user.id;
         var token1 = session.message.user.token;
+        session.send("%s",name);
+         session.send("%s",id);
+        session.send("%s",token1);
+        
         auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
-        intent = args.intent;
+      //  intent = args.intent;
         
         
         session.conversationData[GlobalADID]=id;
         
-        session.conversationData[GloabalIntent] = intent.intent;       
+      //  session.conversationData[GloabalIntent] = intent.intent;       
         session.send('Hello %s! Welcome to Vendor Bot.',name);
 
         var card = {  
