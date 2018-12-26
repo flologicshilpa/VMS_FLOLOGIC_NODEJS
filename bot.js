@@ -2728,49 +2728,50 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                         ]
                         },
                         {
-                        "type": "ColumnSet",
-                        "columns": [
-                            {
-                                "type": "Column",
-                                "width": 3,
-                                "items": [
-                                        {
-                                            "type": "TextBlock",
-                                            "text": "HSN Description:",
-                                            "weight": "bolder",
-                                        }]
-                            },
-                            {
-                                "type": "Column",
-                                "width":3,
-                                "items": [
-                                        {
-                                                    "type": "TextBlock",
-                                                    "text": abc[i].HSN_DESCRIPTION,
-                                        }]
-                            },
-                            {
-                                "type": "Column",
-                                "width": 2,
-                                "items": [
-                                        {
-                                            "type": "TextBlock",
-                                            "text": "HSN Code:",
-                                            "weight": "bolder",
-                                        }]
-                            },
-                            {
-                                "type": "Column",
-                                "width":2,
-                                "items": [
-                                        {
-                                                    "type": "TextBlock",
-                                                    "text": abc[i].HSN_CODE,
-                                        }]
-                            }
-                        
-                        
-                        ]
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "width": 4,
+                                    "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "HSN Description:",
+                                                "weight": "bolder",
+                                            }]
+                                },
+                                {
+                                    "type": "Column",
+                                    "width":6,
+                                    "items": [
+                                            {
+                                                        "type": "TextBlock",
+                                                        "text": abc[i].HSN_DESCRIPTION,
+                                            }]
+                                }]
+                        },
+                        {
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "width": 4,
+                                    "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "HSN Code:",
+                                                "weight": "bolder",
+                                            }]
+                                },
+                                {
+                                    "type": "Column",
+                                    "width":6,
+                                    "items": [
+                                            {
+                                                        "type": "TextBlock",
+                                                        "text": abc[i].HSN_CODE,
+                                            }]
+                                }]
                         },
                         {
                             "type": "ColumnSet",
