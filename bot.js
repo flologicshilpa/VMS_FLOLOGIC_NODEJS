@@ -94,7 +94,7 @@ bot.on("event",function(event) {
     var msg = new builder.Message().address(event.address);
     var address=event.address;
     msg.data.textLocale = "en-us";
-    if (event.name === "buttonClicked") {
+    if (event.name === "btnRefresh") {
         msg.data.text = "I see that you clicked a button.";
       
        
