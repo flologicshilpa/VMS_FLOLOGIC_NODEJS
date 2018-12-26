@@ -90,6 +90,7 @@ const createEvent = (eventName, value, address) => {
 
 
 bot.on("event",function(session, event) {
+    console.log("message",event);
     var msg = new builder.Message().address(event.address);
     msg.data.textLocale = "en-us";
     if (event.name === "buttonClicked") {
