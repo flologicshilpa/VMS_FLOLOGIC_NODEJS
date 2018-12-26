@@ -111,7 +111,7 @@ bot.on("event",function(event) {
 //greeting dialog
 bot.dialog('GreetingDialog',[
     function (session, args, next) {
-        session.send("welcome hi");
+        session.send("welcome");
         var name=session.message.user.name;
         var id=session.message.user.id;
         var token1 = session.message.user.token;
