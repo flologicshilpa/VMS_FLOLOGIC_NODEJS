@@ -114,9 +114,16 @@ bot.on("event",function(event) {
 bot.dialog('GreetingDialog',[
     function (session, args, next) {
         session.send("flologic hgsdfhdsgfdsgf");
+        
         var name=session.message.user.name;
+        
         var id=session.message.user.id;
         var token1 = session.message.user.token;
+        session.send("%s",name);
+         session.send("%s",id);
+        session.send("%s",token1);
+        
+        
         auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
         intent = args.intent;
 
