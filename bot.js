@@ -101,7 +101,7 @@ bot.on("event",function(event) {
         //session.beginDialog('GreetingDialog');  
     }
     //bot.send(msg);
-    bot.beginDialog(address, GreetingDialog);
+    bot.beginDialog(address,'GreetingDialog');
    
     // bot.beginDialog(msg,'/GreetingDialog');
     // bot.beginDialog(message.from.address, '/GreetingDialog');
