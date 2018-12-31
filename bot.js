@@ -1,7 +1,7 @@
 'use strict';
 const builder = require('botbuilder');
 
-const CosmosClient = require('@azure/cosmos').CosmosClient;
+//const CosmosClient = require('@azure/cosmos').CosmosClient;
 const config = require('./config');
 //const url = require('url');
 const endpoint = config.endpoint;
