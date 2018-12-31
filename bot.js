@@ -214,33 +214,46 @@ bot.on("event",function(event) {
 //greeting dialog
 bot.dialog('GreetingDialog',[
     function (session, args, next) {
-
-       var jsonData = JSON.stringify(session.message);
+        session.send("flologic hgsdfhdsgfdsgf");
+        
+        var name=session.message.user.name;
+        
+        var id=session.message.user.id;
+        var token1 = session.message.user.token;
+        
+        var jsonData = JSON.stringify(session.message);
        var jsonParse = JSON.parse(jsonData);
 
-       var name=session.message.user.name;
-       var id=session.message.user.id;
-       var token1 = session.message.user.token;
+        name=session.message.user.name;
+        id=session.message.user.id;
+        token1 = session.message.user.token;
 
-        session.conversationData.botID="12";
-       // session.conversationData.botName=jsonParse.address.bot.name;
-        session.conversationData.userName=name;
-        session.conversationData.userID=id;
+        session.conversationData.botID=jsonParse.address.bot.id;
+        //session.conversationData.botName=jsonParse.address.bot.name;
+      //  session.conversationData.userName=jsonParse.address.user.name;
+       // session.conversationData.userID=jsonParse.address.user.id;
         session.conversationData.conversationID=jsonParse.address.conversation.id;
-       
-        BotID=session.conversationData.botID;
-        UserName= session.conversationData.userName;
-        UserId=session.conversationData.userID;
-        ConversationId=session.conversationData.conversationID;        
-      
+        session.send(" Conv ID : %s ,bot id: ",session.conversationData.conversationID, session.conversationData.botID);
+        
+        auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
+        intent = args.intent;
 
-        createFamilyItem(BotID,ConversationId,UserId,UserName,session.message.text,"UserResponse");      
-        auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");  
-     
+
+        var myDate = new Date();
+        var hrs = myDate.getHours();
+    
+        var greet;
+    
+        if (hrs < 12)
+            greet = 'Good Morning';
+        else if (hrs >= 12 && hrs <= 17)
+            greet = 'Good Afternoon';
+        else if (hrs >= 17 && hrs <= 24)
+            greet = 'Good Evening';
 
         session.conversationData[GlobalADID]=id;        
         session.conversationData[GloabalIntent] = intent.intent;       
-        session.send('Hello  %s! Welcome to Vendor Bot.',name);
+        session.send('%s  %s! Welcome to Vendor Bot.',greet,name);
 
    var card = {  
        
@@ -259,15 +272,15 @@ bot.dialog('GreetingDialog',[
                 "type": "TextBlock",
                 "text": " _**“Vendor details for Kshetra”**_ "+
                 "\r _**“My pending request”**_ " +
-                "\n _**“My requests”**_ " +              
+                "\n _**“My requests”**_ " +               
                 "\n _**“Service details”**_ " +
                 "\n _**“Service details for 3001655”**_ " +
                 "\n _**“Material detail”**_ " +
                 "\n _**“Material detail for 200735”**_ " +
                 "\n _**“Pan no for kshetra”**_ "+
-                "\n _**“Gst no for kshetra”**_ "+
-                "\n _**“Extension for kshetra”**_ "+
-                "\n _**“All document for kshetra”**_ "              
+                "\n _**“gst no for kshetra”**_ "+
+                "\n _**“extension for kshetra”**_ "+
+                "\n _**“all document for kshetra”**_ "              
 
             },
         ]
@@ -277,20 +290,13 @@ bot.dialog('GreetingDialog',[
         .addAttachment(card)
         session.send(msg);
 
-        session.send('How may I help you?');  
-        
-      
-     
-
-
+        session.send('How may I help you?');    
        // session.send("%s",username1)    
         session.endDialog();
     }
 ]).triggerAction({
     matches: 'Vendor.Greeting'
-})
-
-//end Conversation Dialog
+})//end Conversation Dialog
 bot.dialog('endConversationDialog',[
     function (session, args, next) {
         session.conversationData = {};
