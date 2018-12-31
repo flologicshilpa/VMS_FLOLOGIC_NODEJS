@@ -47,9 +47,6 @@ var Request = require("request");
 //common variable
 var i,intent="",entity,gstentity,panentity;
 var auth;
-var id;
-var token1;
-var name;
 
 
 //common variable
@@ -214,7 +211,7 @@ bot.dialog('GreetingDialog',[
         id=session.message.user.id;
         token1 = session.message.user.token;
 
-        session.conversationData.botID=jsonParse.address.bot.id;
+        session.conversationData.botID="1234567";
         //session.conversationData.botName=jsonParse.address.bot.name;
       //  session.conversationData.userName=jsonParse.address.user.name;
        // session.conversationData.userID=jsonParse.address.user.id;
