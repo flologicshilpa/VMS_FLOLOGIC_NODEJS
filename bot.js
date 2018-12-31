@@ -120,7 +120,19 @@ bot.dialog('GreetingDialog',[
         var id=session.message.user.id;
         var token1 = session.message.user.token;
         
-        
+        var jsonData = JSON.stringify(session.message);
+       var jsonParse = JSON.parse(jsonData);
+
+        name=session.message.user.name;
+        id=session.message.user.id;
+        token1 = session.message.user.token;
+
+        //session.conversationData.botID=jsonParse.address.bot.id;
+        //session.conversationData.botName=jsonParse.address.bot.name;
+      //  session.conversationData.userName=jsonParse.address.user.name;
+       // session.conversationData.userID=jsonParse.address.user.id;
+        session.conversationData.conversationID=jsonParse.address.conversation.id;
+        session.send(" Conv ID : %s ",session.conversationData.conversationID);
         
         auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
         intent = args.intent;
