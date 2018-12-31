@@ -2,6 +2,30 @@
 const builder = require('botbuilder');
 
 
+
+//for cosmos db
+
+const CosmosClient = require('@azure/cosmos').CosmosClient;
+const config = require('./config');
+//const url = require('url');
+const endpoint = config.endpoint;
+const masterKey = config.primaryKey;
+const client = new CosmosClient({ endpoint: endpoint, auth: { masterKey: masterKey } });
+
+
+var HttpStatusCodes = { NOTFOUND: 404 };
+var databaseId = config.database.id;
+var containerId = config.container.id;
+
+var BotID;
+var UserId;
+var UserName;
+var ConversationId;
+var UserQuery;
+var UserResponse;
+
+
+
 //qna maker
 //var QnAClient = require('../lib/client');
 var QnAClient = require('./lib/client');
@@ -43,21 +67,21 @@ var userquestion="userquestion";
 var conversationid="conversationid";
 
 
-var inMemoryStorage = new builder.MemoryBotStorage();
-
+//var inMemoryStorage = new builder.MemoryBotStorage();
 //for cosmos db
 
 
-//  var documentDbOptions = {
-//      host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
-//      masterKey: 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
-//     database: 'botdocs',   
-//     collection: 'botdata'
-//  };
+ var documentDbOptions = {
+     host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
+     masterKey: 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
+    database: 'botdocs',   
+    collection: 'botdata'
+ };
 
-// var docDbClient = new azure.DocumentDbClient(documentDbOptions);
+var docDbClient = new azure.DocumentDbClient(documentDbOptions);
 
-// var cosmosStorage = new azure.AzureBotStorage({ gzipData: false }, docDbClient);
+var cosmosStorage = new azure.AzureBotStorage({ gzipData: false }, docDbClient);
+
 
 
 
@@ -69,7 +93,7 @@ const  bot = module.exports =  new builder.UniversalBot(connector, function (ses
         var reply = createEvent("changeBackground", session.message.text, session.message.address);
         session.endDialog(reply);
    
- }).set('storage', inMemoryStorage); 
+ }).set('storage', cosmosStorage); 
 
 
 //LUIS Connection
