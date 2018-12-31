@@ -147,21 +147,21 @@ bot.on("event",function(event) {
 //for small talk
 
 
-bot.use({
-    receive: function (event, next,session) {
+// bot.use({
+//     receive: function (event, next,session) {
         
-        logUserConversation(event);
-        next();
-    },
-    send: function (event, next,session) {
-        logUserConversation(event);       
-        next();
-    }
-});
+//         logUserConversation(event);
+//         next();
+//     },
+//     send: function (event, next,session) {
+//         logUserConversation(event);       
+//         next();
+//     }
+// });
          
-var logUserConversation = (event) => {
-    console.log('message: ' + event.text + ', user: ' + event.address.user.name);    
-};
+// var logUserConversation = (event) => {
+//     console.log('message: ' + event.text + ', user: ' + event.address.user.name);    
+// };
 
 
 function createFamilyItem(BotId,ConversationId,UserId,UserName,UserQuery,UserResponse)  {
