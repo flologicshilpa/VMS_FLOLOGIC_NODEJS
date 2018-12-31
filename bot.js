@@ -76,16 +76,16 @@ var conversationid="conversationid";
 //for cosmos db
 
 
-//  var documentDbOptions = {
-//      host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
-//      masterKey: 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
-//     database: 'botdocs',   
-//     collection: 'botdata'
-//  };
+ var documentDbOptions = {
+     host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
+     masterKey: 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
+    database: 'botdocs',   
+    collection: 'botdata'
+ };
 
-// var docDbClient = new azure.DocumentDbClient(documentDbOptions);
+var docDbClient = new azure.DocumentDbClient(documentDbOptions);
 
-// var cosmosStorage = new azure.AzureBotStorage({ gzipData: false }, docDbClient);
+var cosmosStorage = new azure.AzureBotStorage({ gzipData: false }, docDbClient);
 
 
 
@@ -97,7 +97,11 @@ const  bot = module.exports =  new builder.UniversalBot(connector, function (ses
         var reply = createEvent("changeBackground", session.message.text, session.message.address);
         session.endDialog(reply);
    
- }) //.set('storage', inMemoryStorage); 
+ }).set('storage', cosmosStorage); 
+
+bot.set('persistUserData', true);
+bot.set('persistConversationData', true);
+
 
 
 //LUIS Connection
@@ -107,9 +111,6 @@ const LuisModelUrl1 = process.env.LuisModelUrl || process.env.baseUrl; //'https:
 var recognizer = new builder.LuisRecognizer(LuisModelUrl1);
 bot.recognizer(recognizer);
 
-
-bot.set('persistUserData', true);
-bot.set('persistConversationData', true);
 
 
 
