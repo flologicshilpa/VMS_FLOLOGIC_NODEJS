@@ -48,10 +48,6 @@ var Request = require("request");
 var i,intent="",entity,gstentity,panentity;
 var auth;
 
-
-//common variable
-var i,intent="",entity,gstentity,panentity;
-var auth;
 //variable declaration for session
 var Gloabalentity1="Gloabalentity1";
 var Gloabalentity="Gloabalentity";
