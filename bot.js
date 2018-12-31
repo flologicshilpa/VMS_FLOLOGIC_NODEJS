@@ -1,26 +1,6 @@
 'use strict';
 const builder = require('botbuilder');
 
-/for cosmos db
-
-const CosmosClient = require('@azure/cosmos').CosmosClient;
-const config = require('./config');
-const url = require('url');
-const endpoint = config.endpoint;
-const masterKey = config.primaryKey;
-const client = new CosmosClient({ endpoint: endpoint, auth: { masterKey: masterKey } });
-
-
-var HttpStatusCodes = { NOTFOUND: 404 };
-var databaseId = config.database.id;
-var containerId = config.container.id;
-
-var BotID;
-var UserId;
-var UserName;
-var ConversationId;
-var UserQuery;
-var UserResponse;
 
 //qna maker
 //var QnAClient = require('../lib/client');
