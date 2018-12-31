@@ -1,6 +1,26 @@
 'use strict';
 const builder = require('botbuilder');
 
+//for cosmos db
+
+const CosmosClient = require('@azure/cosmos').CosmosClient;
+const config = require('./config');
+const url = require('url');
+const endpoint = config.endpoint;
+const masterKey = config.primaryKey;
+const client = new CosmosClient({ endpoint: endpoint, auth: { masterKey: masterKey } });
+
+
+var HttpStatusCodes = { NOTFOUND: 404 };
+var databaseId = config.database.id;
+var containerId = config.container.id;
+
+var BotID;
+var UserId;
+var UserName;
+var ConversationId;
+var UserQuery;
+var UserResponse;
 
 //qna maker
 //var QnAClient = require('../lib/client');
@@ -27,6 +47,14 @@ var Request = require("request");
 //common variable
 var i,intent="",entity,gstentity,panentity;
 var auth;
+var id;
+var token1;
+var name;
+
+
+//common variable
+var i,intent="",entity,gstentity,panentity;
+var auth;
 //variable declaration for session
 var Gloabalentity1="Gloabalentity1";
 var Gloabalentity="Gloabalentity";
@@ -43,7 +71,7 @@ var userquestion="userquestion";
 var conversationid="conversationid";
 
 
-var inMemoryStorage = new builder.MemoryBotStorage();
+//var inMemoryStorage = new builder.MemoryBotStorage();
 
 //for cosmos db
 
@@ -69,7 +97,7 @@ const  bot = module.exports =  new builder.UniversalBot(connector, function (ses
         var reply = createEvent("changeBackground", session.message.text, session.message.address);
         session.endDialog(reply);
    
- }).set('storage', inMemoryStorage); 
+ }) //.set('storage', inMemoryStorage); 
 
 
 //LUIS Connection
@@ -79,6 +107,12 @@ const LuisModelUrl1 = process.env.LuisModelUrl || process.env.baseUrl; //'https:
 var recognizer = new builder.LuisRecognizer(LuisModelUrl1);
 bot.recognizer(recognizer);
 
+
+bot.set('persistUserData', true);
+bot.set('persistConversationData', true);
+
+
+
 const createEvent = (eventName, value, address) => {
     var msg = new builder.Message().address(address);
     msg.data.type = "event";
@@ -86,6 +120,8 @@ const createEvent = (eventName, value, address) => {
     msg.data.value = value;
     return msg;
 }
+
+
 
 
 
@@ -108,6 +144,56 @@ bot.on("event",function(event) {
 })
 
 //for small talk
+
+
+bot.use({
+    receive: function (event, next,session) {
+        
+        logUserConversation(event);
+        next();
+    },
+    send: function (event, next,session) {
+        logUserConversation(event);       
+        next();
+    }
+});
+         
+var logUserConversation = (event) => {
+    console.log('message: ' + event.text + ', user: ' + event.address.user.name);    
+};
+
+
+function createFamilyItem(BotId,ConversationId,UserId,UserName,UserQuery,UserResponse)  {
+    var start = new Date;
+     
+     var id=new Date().getTime();
+    // console.log('id 55',id);
+    // console.log('enter 55'+qsn+" ans :"+ans+" date :-",start.toISOString());
+    var documentDefinition = {"id": "Flologic"+ id + "|ChatingData"+",conversationData",
+      "data": { 
+        "BotId":BotId,
+        "ConversationId":ConversationId,
+        "UserID": UserId,
+        "UserName": UserName,
+        "UserQuery":UserQuery,
+        "UserResponse":UserResponse,
+        "currentDate":start.toISOString()
+   }};
+//   console.log('documentDefinition 39:-',documentDefinition);
+//   console.log('enter endpointkey',endpoint);
+//     console.log('enter endpointmasterkey',masterKey);
+//       console.log('enter database id',databaseId);
+//         console.log('enter container id',containerId);
+
+   try {
+     var { item } =  client.database(databaseId).container(containerId).items.create(documentDefinition);
+           console.log(`Created family item with id:\n${documentDefinition.id}\n`);      
+   }
+   catch (error) {
+     console.log('Somthing getting worng',error);     
+   }
+  };
+
 
 
 //greeting dialog
