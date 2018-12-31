@@ -2,6 +2,29 @@
 const builder = require('botbuilder');
 
 
+//for cosmos db
+
+const CosmosClient = require('@azure/cosmos').CosmosClient;
+const config = require('./config');
+const url = require('url');
+const endpoint = config.endpoint;
+const masterKey = config.primaryKey;
+const client = new CosmosClient({ endpoint: endpoint, auth: { masterKey: masterKey } });
+
+
+var HttpStatusCodes = { NOTFOUND: 404 };
+var databaseId = config.database.id;
+var containerId = config.container.id;
+
+var BotID;
+var UserId;
+var UserName;
+var ConversationId;
+var UserQuery;
+var UserResponse;
+
+
+
 //qna maker
 //var QnAClient = require('../lib/client');
 var QnAClient = require('./lib/client');
@@ -27,6 +50,10 @@ var Request = require("request");
 //common variable
 var i,intent="",entity,gstentity,panentity;
 var auth;
+var id;
+var token1;
+var name;
+
 //variable declaration for session
 var Gloabalentity1="Gloabalentity1";
 var Gloabalentity="Gloabalentity";
@@ -41,9 +68,10 @@ var GlobalADID="GlobalADID";
 var GlobalPanGSTCode="GlobalPanGSTCode";
 var userquestion="userquestion";
 var conversationid="conversationid";
+//var GloabalUserId="GloabalUserId";
+//var GlobalToken="GlobalToken";
 
-
-var inMemoryStorage = new builder.MemoryBotStorage();
+//var inMemoryStorage = new builder.MemoryBotStorage();
 
 //for cosmos db
 
@@ -63,13 +91,43 @@ var inMemoryStorage = new builder.MemoryBotStorage();
 
 
 
+
+
+
+
+//create family item
+/**
+* Create family item if it does not exist
+*/
+// async function createFamilyItem(itemBody) {
+//     try {
+//         // read the item to see if it exists
+//         const { item } = await client.database(databaseId).container(containerId).item(itemBody.id).read();
+//         console.log(`Item with family id ${itemBody.id} already exists\n`);
+//     }
+//     catch (error) {
+//        // create the family item if it does not exist
+//        if (error.code === HttpStatusCodes.NOTFOUND) {
+//            const { item } = await client.database(databaseId).container(containerId).items.create(itemBody);
+//            console.log(`Created family item with id:\n${itemBody.id}\n`);
+//        } else {
+//            throw error;
+//        }
+//     }
+//   };
+
+
+
+
+
+
 //universal bot connection
 const  bot = module.exports =  new builder.UniversalBot(connector, function (session, args) {  
-    
-        var reply = createEvent("changeBackground", session.message.text, session.message.address);
+     var reply = createEvent("changeBackground", session.message.text, session.message.address);
         session.endDialog(reply);
-   
- }).set('storage', inMemoryStorage); 
+
+ });
+ //.set('storage', cosmosStorage); 
 
 
 //LUIS Connection
@@ -79,6 +137,62 @@ const LuisModelUrl1 = process.env.LuisModelUrl || process.env.baseUrl; //'https:
 var recognizer = new builder.LuisRecognizer(LuisModelUrl1);
 bot.recognizer(recognizer);
 
+
+
+bot.set('persistUserData', true);
+bot.set('persistConversationData', true);
+
+//Middleware for logging
+bot.use({
+    receive: function (event, next,session) {
+        
+        logUserConversation(event);
+        next();
+    },
+    send: function (event, next,session) {
+        logUserConversation(event);       
+        next();
+    }
+});
+         
+var logUserConversation = (event) => {
+    console.log('message: ' + event.text + ', user: ' + event.address.user.name);    
+};
+
+async function createFamilyItem(BotId,ConversationId,UserId,UserName,UserQuery,UserResponse)  {
+    //var start = new Date;
+     
+     var id=new Date().getTime();
+    // console.log('id 55',id);
+    // console.log('enter 55'+qsn+" ans :"+ans+" date :-",start.toISOString());
+    var documentDefinition = {"id": "Flologic"+ id + "|ChatingData"+",conversationData",
+      "data": { 
+        "BotId":BotId,
+        "ConversationId":ConversationId,
+        "UserID": UserId,
+        "UserName": UserName,
+        "UserQuery":UserQuery,
+        "UserResponse":UserResponse,
+        "currentDate":start.toISOString()
+   }};
+//   console.log('documentDefinition 39:-',documentDefinition);
+//   console.log('enter endpointkey',endpoint);
+//     console.log('enter endpointmasterkey',masterKey);
+//       console.log('enter database id',databaseId);
+//         console.log('enter container id',containerId);
+
+   try {
+     var { item } =  client.database(databaseId).container(containerId).items.create(documentDefinition);
+           console.log(`Created family item with id:\n${documentDefinition.id}\n`);      
+   }
+   catch (error) {
+     console.log('Somthing getting worng',error);     
+   }
+  };
+
+
+ //call this event for after click on refresh button  form vendor bot window
+ 
 const createEvent = (eventName, value, address) => {
     var msg = new builder.Message().address(address);
     msg.data.type = "event";
@@ -87,72 +201,49 @@ const createEvent = (eventName, value, address) => {
     return msg;
 }
 
-
-
 bot.on("event",function(event) {
-    console.log("message",event);
+    //console.log("message",event);
     var msg = new builder.Message().address(event.address);
     var address=event.address;
     msg.data.textLocale = "en-us";
     if (event.name === "btnRefresh") {
-        msg.data.text = "I see that you clicked a button.";
-      
-       
-        //session.beginDialog('GreetingDialog');  
+        msg.data.text = "I see that you clicked a button.";      
     }
-    //bot.send(msg);
-    bot.beginDialog(address,'endConversationDialog');
-   
-    // bot.beginDialog(msg,'/GreetingDialog');
-    // bot.beginDialog(message.from.address, '/GreetingDialog');
+    bot.beginDialog(address,'endConversationDialog');   
 })
 
-//for small talk
 
 
 //greeting dialog
 bot.dialog('GreetingDialog',[
     function (session, args, next) {
-        session.send("flologic hgsdfhdsgfdsgf");
-        
-        var name=session.message.user.name;
-        
-        var id=session.message.user.id;
-        var token1 = session.message.user.token;
-        
-        var jsonData = JSON.stringify(session.message);
+
+       var jsonData = JSON.stringify(session.message);
        var jsonParse = JSON.parse(jsonData);
 
         name=session.message.user.name;
         id=session.message.user.id;
         token1 = session.message.user.token;
 
-        session.conversationData.botID=jsonParse.address.bot.id;
-        //session.conversationData.botName=jsonParse.address.bot.name;
-      //  session.conversationData.userName=jsonParse.address.user.name;
-       // session.conversationData.userID=jsonParse.address.user.id;
+        session.conversationData.botID="123456789";
+       // session.conversationData.botName=jsonParse.address.bot.name;
+        session.conversationData.userName=name;
+        session.conversationData.userID=id;
         session.conversationData.conversationID=jsonParse.address.conversation.id;
-        session.send(" Conv ID : %s ,bot id: ",session.conversationData.conversationID, session.conversationData.botID);
-        
-        auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
-        intent = args.intent;
+       
+        BotID=session.conversationData.botID;
+        UserName= session.conversationData.userName;
+        UserId=session.conversationData.userID;
+        ConversationId=session.conversationData.conversationID;        
+      
 
-
-        var myDate = new Date();
-        var hrs = myDate.getHours();
-    
-        var greet;
-    
-        if (hrs < 12)
-            greet = 'Good Morning';
-        else if (hrs >= 12 && hrs <= 17)
-            greet = 'Good Afternoon';
-        else if (hrs >= 17 && hrs <= 24)
-            greet = 'Good Evening';
+        createFamilyItem(BotID,ConversationId,UserId,UserName,session.message.text,"UserResponse");      
+        auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");  
+     
 
         session.conversationData[GlobalADID]=id;        
         session.conversationData[GloabalIntent] = intent.intent;       
-        session.send('%s  %s! Welcome to Vendor Bot.',greet,name);
+        session.send('Hello  %s! Welcome to Vendor Bot.',name);
 
    var card = {  
        
@@ -171,15 +262,15 @@ bot.dialog('GreetingDialog',[
                 "type": "TextBlock",
                 "text": " _**“Vendor details for Kshetra”**_ "+
                 "\r _**“My pending request”**_ " +
-                "\n _**“My requests”**_ " +               
+                "\n _**“My requests”**_ " +              
                 "\n _**“Service details”**_ " +
                 "\n _**“Service details for 3001655”**_ " +
                 "\n _**“Material detail”**_ " +
                 "\n _**“Material detail for 200735”**_ " +
                 "\n _**“Pan no for kshetra”**_ "+
-                "\n _**“gst no for kshetra”**_ "+
-                "\n _**“extension for kshetra”**_ "+
-                "\n _**“all document for kshetra”**_ "              
+                "\n _**“Gst no for kshetra”**_ "+
+                "\n _**“Extension for kshetra”**_ "+
+                "\n _**“All document for kshetra”**_ "              
 
             },
         ]
@@ -189,7 +280,12 @@ bot.dialog('GreetingDialog',[
         .addAttachment(card)
         session.send(msg);
 
-        session.send('How may I help you?');    
+        session.send('How may I help you?');  
+        
+      
+     
+
+
        // session.send("%s",username1)    
         session.endDialog();
     }
@@ -205,63 +301,12 @@ bot.dialog('endConversationDialog',[
         var name=session.message.user.name;
         var id=session.message.user.id;
         var token1 = session.message.user.token;
-        session.send("%s",name);
-         session.send("%s",id);
-        session.send("%s",token1);
-        
-        auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");
-      //  intent = args.intent;
-        
-        
-        session.conversationData[GlobalADID]=id;
-        
-      //  session.conversationData[GloabalIntent] = intent.intent;       
-        session.send('Hello %s! Welcome to Vendor Bot.',name);
-
-        var card = {  
-            
-            'contentType': 'application/vnd.microsoft.card.adaptive',
-            'content': {
-                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                "type": "AdaptiveCard",
-                "version": "1.0",
-
-                    "body": [
-                    {
-                        "type": "TextBlock",
-                        "text": " **I can help you get details about vendors, materials, services \n and even your requests!** "+
-                        "\n You may ask me questions like:" 
-                    },
-                    {
-                        "type": "TextBlock",
-                        "text": " _**“Vendor details for Kshetra”**_ "+
-                        "\r _**“My pending request”**_ " +
-                        "\n _**“My requests”**_ " +                        
-                        "\n _**“Service details”**_ " +
-                        "\n _**“Service details for 3001655”**_ " +
-                        "\n _**“Material detail”**_ " +
-                        "\n _**“Material detail for 200735”**_ " +
-                        "\n _**“Pan no for kshetra”**_ "+
-                        "\n _**“gst no for kshetra”**_ "+
-                        "\n _**“extension for kshetra”**_ "+
-                        "\n _**“all document for kshetra”**_ "              
-
-                    },
-                    
-                ]
-            }
-            }
-                var msg = new builder.Message()
-                .addAttachment(card)
-                session.send(msg);
-        session.send("You have stopped current conversation! that is okay,just ping me when you are ready and we can chat again.")            
-       // session.send('I am sorry I did not understand your question. Please retry the query or you may startover by clicking the start over button');        
+        auth = "Basic " + new Buffer(id + ":" + token1).toString("base64");       
+        session.conversationData[GlobalADID]=id;           
+        session.send("You have stopped current conversation! that is okay, just ping me when you are ready and we can chat again.")              
         session.endDialog();
-    }
+    }]);
 
-]).triggerAction({
-    matches: 'Vendor.Cancel'
-})
 
 //no intent and entity Dialog
 bot.dialog('NoneDialog',[
@@ -280,7 +325,19 @@ var str3="";
 //Vendor all details Dialog
 bot.dialog('AllDetailsDialog',[
     function (session, args, next) {
+
+        BotID=session.conversationData.botID;
+        UserName= session.conversationData.userName;
+        UserId=session.conversationData.userID;
+        ConversationId=session.conversationData.conversationID;        
+      
+
+        createFamilyItem(BotID,ConversationId,UserId,UserName,session.message.text,"UserResponse");     
+    
+     
        
+        //createFamilyItem(session.userData.botID, session.userData.conversationID, session.userData.userID,session.userData.userName,session.message.text,"UserResponse");      
+
         session.conversationData[conversationid]=session.conversationData.id;
         session.conversationData[userquestion]=session.message.text;
 
@@ -443,7 +500,7 @@ bot.dialog('AllDetailsDialog',[
                            // session.send("%s",JSON.stringify(dict));
                             if(abc.length > 4)
                             {
-                                session.send("More than 5 rows return please narrow your search.If name not found please narrow your search or resubmit the query");
+                                session.send("More than 5 rows returned. Please narrow your search and resubmit your query.");
                                 builder.Prompts.choice(session, "Select Name",dict,{listStyle:3});
                             }
                             else
@@ -454,7 +511,7 @@ bot.dialog('AllDetailsDialog',[
                         //no record found  
                         else
                         {
-                                session.send("No data found for vendor : %s",session.conversationData[GlobalVendorName]);
+                                session.send("No queried data found for : %s",session.conversationData[GlobalVendorName]);
                         }            
                     }                            
                 });   
@@ -498,7 +555,13 @@ bot.dialog('AllDetailsDialog',[
             session.endDialog(); 
            }
         
-        }  
+        } 
+        
+        
+
+
+
+
     },
     //Get Data for selected name
       function (session, results) { 
@@ -552,6 +615,16 @@ bot.dialog('AllDetailsDialog',[
 //Vendor Pan and Gst No
 bot.dialog('GSTandPAN_NoDialog',[
     function (session, args, next) {
+
+        BotID=session.conversationData.botID;
+        UserName= session.conversationData.userName;
+        UserId=session.conversationData.userID;
+        ConversationId=session.conversationData.conversationID;        
+      
+
+        createFamilyItem(BotID,ConversationId,UserId,UserName,session.message.text,"UserResponse");  
+     
+       
 
         if(args.Entity==true)
         {                
@@ -613,10 +686,6 @@ bot.dialog('GSTandPAN_NoDialog',[
                 session.conversationData[GlobalVendorName]="";
              }
         }     
-
-
-
-
        
     if(session.conversationData[Gloabalentity])
     {
@@ -686,7 +755,7 @@ bot.dialog('GSTandPAN_NoDialog',[
                             }
                             if(abc.length > 4)
                             {
-                                    session.send("More than 5 rows return please narrow your search.If name not found please narrow your search or resubmit the query");
+                                   session.send("More than 5 rows returned. Please narrow your search and resubmit your query.");
                                     builder.Prompts.choice(session, "Select Name: ", dict,{listStyle:3});
                             }
                             else{
@@ -756,7 +825,7 @@ bot.dialog('GSTandPAN_NoDialog',[
 
                 }
                 else{
-                    session.send("Data not available for vendor : %s",session.conversationData[GlobalVendorName]);
+                    session.send("No queried data available for: %s",session.conversationData[GlobalVendorName]);
                     session.endDialog();
                 }
                
@@ -833,7 +902,7 @@ bot.dialog('GSTandPAN_NoDialog',[
                         }    
                         else
                         {
-                            session.send("Data not available for vendor : %s",session.conversationData[GlobalVendorName]);
+                            session.send("No queried data available for : %s",session.conversationData[GlobalVendorName]);
                             session.endDialog();
                         }
                     }                        
@@ -853,6 +922,7 @@ bot.dialog('GSTandPAN_NoDialog',[
 //vendor extention dialog
 bot.dialog('ExtensionDialog',[
     function (session, args, next) {
+
 
        if(args.Entity==true)
        {                
@@ -875,9 +945,7 @@ bot.dialog('ExtensionDialog',[
             }
        }  
 
-
-       
-        //Get Data From Web Api
+       //Get Data From Web Api
         if(session.conversationData[Gloabalentity])
         {
             //var Request = require("request");
@@ -932,7 +1000,7 @@ bot.dialog('ExtensionDialog',[
                     }
                     if(abc.length > 4)
                     {
-                            session.send("More than 5 rows return please narrow your search.If name not found please narrow your search or resubmit the query");
+                             session.send("More than 5 rows returned. Please narrow your search and resubmit your query.");
                             builder.Prompts.choice(session, "Select Name: ", dict,{listStyle:3});
                     }
                     else{
@@ -1041,11 +1109,8 @@ bot.dialog('ExtensionDialog',[
 //vendor all document
 bot.dialog('AllDocumentDialog',[
     function (session, args, next) {
-
-        //setintent
-       // intent = args.intent;
-        //session.conversationData[GloabalIntent] = intent.intent;    
-        //entity = builder.EntityRecognizer.findEntity(intent.entities, 'Name');
+    createFamilyItem(session.userData.botID, session.userData.conversationID, session.userData.userID,session.userData.userName,session.message.text,"UserResponse");      
+      
        if(args.Entity==true)
        {                
        }
@@ -2227,7 +2292,7 @@ bot.dialog('askForPendingorDetailsRequest', [
 //adaptive card for vendor details
 function getCardsAttachmentsForVendorName(session,abc) {
 
-     var statusimage = getstatusURL(session,abc[0].STATUS);
+    var statusimage = getstatusURL(session,abc);
     
     var card = {
             'contentType': 'application/vnd.microsoft.card.adaptive',
@@ -2559,68 +2624,6 @@ function getCardsAttachmentsForExtensionList(session,abc)
 }
 
 //adaptive card for material extension attachment
-function getCardsAttachmentsForMaterialextension(session,abc)
-{  
-        var attachments=[];
-        var j,i;
-        var extensionlist="";
-        for(i=0;i<abc.length;i++)
-        {                    
-            for(j=0;j<abc[i].EXTENSION_LIST.length;j++)
-            {
-                if(abc[i].EXTENSION_LIST[j].PLANT != undefined || abc[i].EXTENSION_LIST[j].PLANT !=null || abc[i].EXTENSION_LIST[j].PLANT !="")
-                {
-                     extensionlist = extensionlist + "," + abc[i].EXTENSION_LIST[j].PLANT ;
-                }
-            }
-
-            if(extensionlist!="")
-            {
-                var card = {
-                             "contentType": "application/vnd.microsoft.card.adaptive",
-                             "content": {
-                             "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                             "type": "AdaptiveCard",
-                             "version": "1.0",
-                             "body": [{                                          
-                                        "type": "Container",
-                                        "items": [{
-                                                "type":"TextBlock",
-                                                "text":'Extension for material code : ' + abc[i].MATERIAL_NUMBER,                                               
-                                                "color":"red",
-                                                "weight":"bolder",
-                                                "size": "medium"}]
-                                    },
-                                    {
-                                        "type": "Container",
-                                        "separator": true,
-                                        "items":[{                                            
-                                                "type": "ColumnSet",
-                                                "columns": [{
-                                                        "type": "Column",
-                                                        "width": 3,
-                                                        "items": [{'type': 'TextBlock','text': 'Plant Name :','weight': 'bolder'}]
-                                                    },
-                                                    {
-                                                        "type": "Column",
-                                                        "width":7,
-                                                        "items": [{'type': 'TextBlock','text':extensionlist}]
-                                                    }]
-                                                }]
-                                    }
-                                    ]//body close 
-                                    }//content
-                                }//card
-                                attachments.push(card);       
-                    }
-                                
-            }//for loop
-         
-        return attachments;
-}
-
-//adaptive card for MaterialDetails
-//adaptive card for MaterialDetails
 function getCardsAttachmentsForMaterialDetails(session,abc)
 {  
         var attachments=[];
@@ -2674,7 +2677,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                                     "wrap": true
                                                 }
                                             ],
-                                            "width": "auto"
+                                            "width": 7
                                         },
                                         {
                                             "type": "Column",
@@ -2686,7 +2689,7 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                                                     "size": "small"
                                                 }
                                             ],
-                                            "width": "auto"
+                                            "width": 3
                                         },
     
                                     ] }
@@ -2697,47 +2700,50 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
                          "separator": true,
                          "items": [
                         {
-                        "type": "ColumnSet",
-                        "columns": [
-                            {
-                                "type": "Column",
-                                "width": 3,
-                                "items": [
+                                    "type": "ColumnSet",
+                                    "columns": [
                                         {
-                                            "type": "TextBlock",
-                                            "text": "Group:",
-                                            "weight": "bolder",
+                                            "type": "Column",
+                                            "width": 4,
+                                            "items": [
+                                                    {
+                                                        'type': 'TextBlock',
+                                                        'text': 'Material Group:',
+                                                        'weight': 'bolder',
+                                                    }]
+                                        },
+                                        {
+                                            "type": "Column",
+                                            "width": 6,
+                                            "items": [
+                                                    {
+                                                                "type": "TextBlock",
+                                                                "text": abc[i].MATERIAL_GROUP,
+                                                    }]
                                         }]
-                            },
-                            {
-                                "type": "Column",
-                                "width":3,
-                                "items": [
-                                        {
+                        },
+                        {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": 4,
+                                        "items": [
+                                                {
                                                     "type": "TextBlock",
-                                                    "text": abc[i].MATERIAL_GROUP,
-                                        }]
-                            },
-                            {
-                                "type": "Column",
-                                "width": 2,
-                                "items": [
-                                        {
-                                            "type": "TextBlock",
-                                            "text": "Status:",
-                                            "weight": "bolder",
-                                        }]
-                            },
-                            {
-                                "type": "Column",
-                                "width":2,
-                                "items": [
-                                        {
-                                                    "type": "TextBlock",
-                                                    "text": abc[i].MATERIAL_STATUS,
-                                        }]
-                            }
-                        ]
+                                                    "text": "Material Status:",
+                                                    "weight": "bolder",
+                                                }]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": 6,
+                                        "items": [
+                                                {
+                                                            "type": "TextBlock",
+                                                            "text": abc[i].MATERIAL_STATUS,
+                                                }]
+                                    }]
                         },
                         {
                             "type": "ColumnSet",
@@ -2903,6 +2909,8 @@ function getCardsAttachmentsForMaterialDetails(session,abc)
 
         return attachments;
 }
+
+
 
 //adaptive card for ServiceDetails
 function getCardsAttachmentsForServiceDetails(session,abc)
