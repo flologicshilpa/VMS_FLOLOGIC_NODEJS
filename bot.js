@@ -1,7 +1,7 @@
 'use strict';
 const builder = require('botbuilder');
 
-//for cosmos db
+/for cosmos db
 
 const CosmosClient = require('@azure/cosmos').CosmosClient;
 const config = require('./config');
@@ -47,7 +47,6 @@ var Request = require("request");
 //common variable
 var i,intent="",entity,gstentity,panentity;
 var auth;
-
 //variable declaration for session
 var Gloabalentity1="Gloabalentity1";
 var Gloabalentity="Gloabalentity";
@@ -64,21 +63,21 @@ var userquestion="userquestion";
 var conversationid="conversationid";
 
 
-//var inMemoryStorage = new builder.MemoryBotStorage();
+var inMemoryStorage = new builder.MemoryBotStorage();
 
 //for cosmos db
 
 
- var documentDbOptions = {
-     host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
-     masterKey: 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
-    database: 'botdocs',   
-    collection: 'botdata'
- };
+//  var documentDbOptions = {
+//      host: 'https://gplflologiccosmosdbuat.documents.azure.com:443/', 
+//      masterKey: 'dmlyKuqhXlLQto7bY8tsZLJpM11Iq3x9FSKfllqZisN55YMrg18FfBJ6jh2u7JXWxAsnm44Um9iTijn4Geq77A==', 
+//     database: 'botdocs',   
+//     collection: 'botdata'
+//  };
 
-var docDbClient = new azure.DocumentDbClient(documentDbOptions);
+// var docDbClient = new azure.DocumentDbClient(documentDbOptions);
 
-var cosmosStorage = new azure.AzureBotStorage({ gzipData: false }, docDbClient);
+// var cosmosStorage = new azure.AzureBotStorage({ gzipData: false }, docDbClient);
 
 
 
@@ -90,11 +89,7 @@ const  bot = module.exports =  new builder.UniversalBot(connector, function (ses
         var reply = createEvent("changeBackground", session.message.text, session.message.address);
         session.endDialog(reply);
    
- }).set('storage', cosmosStorage); 
-
-bot.set('persistUserData', true);
-bot.set('persistConversationData', true);
-
+ }).set('storage', inMemoryStorage); 
 
 
 //LUIS Connection
@@ -104,9 +99,6 @@ const LuisModelUrl1 = process.env.LuisModelUrl || process.env.baseUrl; //'https:
 var recognizer = new builder.LuisRecognizer(LuisModelUrl1);
 bot.recognizer(recognizer);
 
-
-
-
 const createEvent = (eventName, value, address) => {
     var msg = new builder.Message().address(address);
     msg.data.type = "event";
@@ -114,8 +106,6 @@ const createEvent = (eventName, value, address) => {
     msg.data.value = value;
     return msg;
 }
-
-
 
 
 
@@ -140,56 +130,6 @@ bot.on("event",function(event) {
 //for small talk
 
 
-// bot.use({
-//     receive: function (event, next,session) {
-        
-//         logUserConversation(event);
-//         next();
-//     },
-//     send: function (event, next,session) {
-//         logUserConversation(event);       
-//         next();
-//     }
-// });
-         
-// var logUserConversation = (event) => {
-//     console.log('message: ' + event.text + ', user: ' + event.address.user.name);    
-// };
-
-
-// function createFamilyItem(BotId,ConversationId,UserId,UserName,UserQuery,UserResponse)  {
-//     var start = new Date;
-     
-//      var id=new Date().getTime();
-//     // console.log('id 55',id);
-//     // console.log('enter 55'+qsn+" ans :"+ans+" date :-",start.toISOString());
-//     var documentDefinition = {"id": "Flologic"+ id + "|ChatingData"+",conversationData",
-//       "data": { 
-//         "BotId":BotId,
-//         "ConversationId":ConversationId,
-//         "UserID": UserId,
-//         "UserName": UserName,
-//         "UserQuery":UserQuery,
-//         "UserResponse":UserResponse,
-//         "currentDate":start.toISOString()
-//    }};
-// //   console.log('documentDefinition 39:-',documentDefinition);
-// //   console.log('enter endpointkey',endpoint);
-// //     console.log('enter endpointmasterkey',masterKey);
-// //       console.log('enter database id',databaseId);
-// //         console.log('enter container id',containerId);
-
-//    try {
-//      var { item } =  client.database(databaseId).container(containerId).items.create(documentDefinition);
-//            console.log(`Created family item with id:\n${documentDefinition.id}\n`);      
-//    }
-//    catch (error) {
-//      console.log('Somthing getting worng',error);     
-//    }
-//   };
-
-
-
 //greeting dialog
 bot.dialog('GreetingDialog',[
     function (session, args, next) {
@@ -207,7 +147,7 @@ bot.dialog('GreetingDialog',[
         id=session.message.user.id;
         token1 = session.message.user.token;
 
-        session.conversationData.botID="1234567";
+        session.conversationData.botID=jsonParse.address.bot.id;
         //session.conversationData.botName=jsonParse.address.bot.name;
       //  session.conversationData.userName=jsonParse.address.user.name;
        // session.conversationData.userID=jsonParse.address.user.id;
