@@ -3,7 +3,7 @@ const builder = require('botbuilder');
 
 const CosmosClient = require('@azure/cosmos').CosmosClient;
 const config = require('./config');
-const url = require('url');
+//const url = require('url');
 const endpoint = config.endpoint;
 const masterKey = config.primaryKey;
 const client = new CosmosClient({ endpoint: endpoint, auth: { masterKey: masterKey } });
