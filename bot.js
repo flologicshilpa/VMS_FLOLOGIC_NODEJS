@@ -50,9 +50,6 @@ var Request = require("request");
 //common variable
 var i,intent="",entity,gstentity,panentity;
 var auth;
-var id;
-var token1;
-var name;
 
 //variable declaration for session
 var Gloabalentity1="Gloabalentity1";
@@ -162,10 +159,10 @@ var logUserConversation = (event) => {
 async function createFamilyItem(BotId,ConversationId,UserId,UserName,UserQuery,UserResponse)  {
     //var start = new Date;
      
-     var id=new Date().getTime();
+     //var id=new Date().getTime();
     // console.log('id 55',id);
     // console.log('enter 55'+qsn+" ans :"+ans+" date :-",start.toISOString());
-    var documentDefinition = {"id": "Flologic"+ id + "|ChatingData"+",conversationData",
+    var documentDefinition = {"id": "Flologic"+ BotId + "|ChatingData"+",conversationData",
       "data": { 
         "BotId":BotId,
         "ConversationId":ConversationId,
@@ -221,11 +218,11 @@ bot.dialog('GreetingDialog',[
        var jsonData = JSON.stringify(session.message);
        var jsonParse = JSON.parse(jsonData);
 
-        name=session.message.user.name;
-        id=session.message.user.id;
-        token1 = session.message.user.token;
+       var name=session.message.user.name;
+       var id=session.message.user.id;
+       var token1 = session.message.user.token;
 
-        session.conversationData.botID="123456789";
+        session.conversationData.botID="12";
        // session.conversationData.botName=jsonParse.address.bot.name;
         session.conversationData.userName=name;
         session.conversationData.userID=id;
@@ -326,7 +323,7 @@ var str3="";
 bot.dialog('AllDetailsDialog',[
     function (session, args, next) {
 
-        BotID=session.conversationData.botID;
+        BotID="13";
         UserName= session.conversationData.userName;
         UserId=session.conversationData.userID;
         ConversationId=session.conversationData.conversationID;        
@@ -616,7 +613,7 @@ bot.dialog('AllDetailsDialog',[
 bot.dialog('GSTandPAN_NoDialog',[
     function (session, args, next) {
 
-        BotID=session.conversationData.botID;
+        BotID="14";
         UserName= session.conversationData.userName;
         UserId=session.conversationData.userID;
         ConversationId=session.conversationData.conversationID;        
