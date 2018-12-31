@@ -6,7 +6,7 @@ const config = require('./config');
 //const url = require('url');
 const endpoint = config.endpoint;
 const masterKey = config.primaryKey;
-const client = new CosmosClient({ endpoint: endpoint, auth: { masterKey: masterKey } });
+//const client = new CosmosClient({ endpoint: endpoint, auth: { masterKey: masterKey } });
 
 
 var HttpStatusCodes = { NOTFOUND: 404 };
