@@ -164,36 +164,36 @@ bot.on("event",function(event) {
 // };
 
 
-function createFamilyItem(BotId,ConversationId,UserId,UserName,UserQuery,UserResponse)  {
-    var start = new Date;
+// function createFamilyItem(BotId,ConversationId,UserId,UserName,UserQuery,UserResponse)  {
+//     var start = new Date;
      
-     var id=new Date().getTime();
-    // console.log('id 55',id);
-    // console.log('enter 55'+qsn+" ans :"+ans+" date :-",start.toISOString());
-    var documentDefinition = {"id": "Flologic"+ id + "|ChatingData"+",conversationData",
-      "data": { 
-        "BotId":BotId,
-        "ConversationId":ConversationId,
-        "UserID": UserId,
-        "UserName": UserName,
-        "UserQuery":UserQuery,
-        "UserResponse":UserResponse,
-        "currentDate":start.toISOString()
-   }};
-//   console.log('documentDefinition 39:-',documentDefinition);
-//   console.log('enter endpointkey',endpoint);
-//     console.log('enter endpointmasterkey',masterKey);
-//       console.log('enter database id',databaseId);
-//         console.log('enter container id',containerId);
+//      var id=new Date().getTime();
+//     // console.log('id 55',id);
+//     // console.log('enter 55'+qsn+" ans :"+ans+" date :-",start.toISOString());
+//     var documentDefinition = {"id": "Flologic"+ id + "|ChatingData"+",conversationData",
+//       "data": { 
+//         "BotId":BotId,
+//         "ConversationId":ConversationId,
+//         "UserID": UserId,
+//         "UserName": UserName,
+//         "UserQuery":UserQuery,
+//         "UserResponse":UserResponse,
+//         "currentDate":start.toISOString()
+//    }};
+// //   console.log('documentDefinition 39:-',documentDefinition);
+// //   console.log('enter endpointkey',endpoint);
+// //     console.log('enter endpointmasterkey',masterKey);
+// //       console.log('enter database id',databaseId);
+// //         console.log('enter container id',containerId);
 
-   try {
-     var { item } =  client.database(databaseId).container(containerId).items.create(documentDefinition);
-           console.log(`Created family item with id:\n${documentDefinition.id}\n`);      
-   }
-   catch (error) {
-     console.log('Somthing getting worng',error);     
-   }
-  };
+//    try {
+//      var { item } =  client.database(databaseId).container(containerId).items.create(documentDefinition);
+//            console.log(`Created family item with id:\n${documentDefinition.id}\n`);      
+//    }
+//    catch (error) {
+//      console.log('Somthing getting worng',error);     
+//    }
+//   };
 
 
 
